@@ -100,13 +100,14 @@ export class TableNodeData extends TreeNodeData {
 	private readonly pagination: { start: number; count: number } = { start: -1, count: -1 };
 	
 	public moreEntriesExist: boolean;
-	public gotSearched?:boolean = false;
+	public gotSearched?: boolean = false;
 	public parameterPredicate: string[] = [];
 	public isHighlighted: number = -1;
 	public isOutdated: boolean = false;
 	public isRootNode = false;
 	public isLeafNode = false;
 	public queries: string[] = [];
+	public executionTime?: number;
 
 	constructor(json: TreeForTableResponse, parameterPredicate: string[], id: number[], queries: string[] = []) {
 		super(json.predicate, parameterPredicate);
@@ -119,6 +120,9 @@ export class TableNodeData extends TreeNodeData {
 		this.pagination.count = count >= 20 ? count : 20;
 
 		this.moreEntriesExist = json.tableEntries?.pagination.moreEntriesExist ?? false;
+
+		this.executionTime = json.metaInformation?.executionTime;
+
 		if (json.tableEntries !== undefined) {
 			this.setTableEntries(json.tableEntries);
 		}
@@ -162,6 +166,9 @@ export class TableNodeData extends TreeNodeData {
 					termTuple: entry.termTuple
 				})),
 				pagination: { start: this.pagination.start, moreEntriesExist: this.moreEntriesExist }
+			},
+			metaInformation: {
+				executionTime: this.executionTime,
 			},
 			possibleRulesAbove: this.rulesAbove,
 			possibleRulesBelow: this.rulesBelow,

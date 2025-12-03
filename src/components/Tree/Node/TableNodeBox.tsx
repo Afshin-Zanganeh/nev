@@ -64,6 +64,7 @@ function TableNodeHeader({
 function TableNodeDetails({ node, mode, onRowClicked, onPopOutClicked }: Readonly<TableNodeDetailsProps>) {
   // const [activeTab, setActiveTab] = useState<"table" | "details">("table");
   const scrollDivRef = useRef<HTMLDivElement>(null);
+  const executionTime = node.executionTime;
   const entries = node.getTableEntries();
   const columns = entries[0]
     ? [
@@ -206,6 +207,8 @@ function TableNodeDetails({ node, mode, onRowClicked, onPopOutClicked }: Readonl
                   <Tooltip title="Open full table in new window!" placement="right" enterDelay={500}>
                     <a onClick={() => onPopOutClicked(node)}>(see more...)</a> 
                   </Tooltip> : ''} 
+
+                {executionTime !== undefined ? <><br/>Reasoning for all facts took {executionTime} milliseconds</> : ""}.
               </div>
                
               <div style={{ float: "right", paddingRight: "5px" }}>

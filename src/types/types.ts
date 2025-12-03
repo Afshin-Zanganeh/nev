@@ -79,6 +79,9 @@ export type TableResponseBase = {
       moreEntriesExist: boolean;
     };
   };
+  metaInformation: {
+    executionTime: number;
+  };
   possibleRulesAbove: Rule[];
   possibleRulesBelow: Rule[];
   isCollapsed?: boolean;

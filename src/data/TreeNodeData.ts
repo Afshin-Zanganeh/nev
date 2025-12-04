@@ -107,7 +107,7 @@ export class TableNodeData extends TreeNodeData {
 	public isRootNode = false;
 	public isLeafNode = false;
 	public queries: string[] = [];
-	public executionTime?: number;
+	public executionTime: number;
 
 	constructor(json: TreeForTableResponse, parameterPredicate: string[], id: number[], queries: string[] = []) {
 		super(json.predicate, parameterPredicate);
@@ -191,6 +191,7 @@ export class TableNodeData extends TreeNodeData {
 		const count = query.tableEntries.entries.length ?? -1;
 		this.pagination.count = count >= 20 ? count : 20; // min count = 20
 		this.moreEntriesExist = query.tableEntries.pagination.moreEntriesExist;
+		this.executionTime = query.metaInformation.executionTime;
 		this.setTableEntries(query.tableEntries);
 		this.setRulesAbove(query.possibleRulesAbove);
 		this.setRulesBelow(query.possibleRulesBelow);

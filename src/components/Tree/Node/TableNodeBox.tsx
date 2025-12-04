@@ -208,7 +208,7 @@ function TableNodeDetails({ node, mode, onRowClicked, onPopOutClicked }: Readonl
                     <a onClick={() => onPopOutClicked(node)}>(see more...)</a> 
                   </Tooltip> : ''} 
 
-                {executionTime !== undefined ? <><br/>Reasoning for all facts took {executionTime} milliseconds</> : ""}.
+                {executionTime !== undefined ? <><br/>Reasoning for the visible facts took {executionTime} milliseconds</> : ""}.
               </div>
                
               <div style={{ float: "right", paddingRight: "5px" }}>

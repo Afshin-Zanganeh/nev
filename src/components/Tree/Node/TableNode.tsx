@@ -98,7 +98,7 @@ export default function TableNode({
                     <button
                         type="button"
                         className="custom-node-btn-corner-base custom-node-btn-corner-explore"
-                        style={{ top: -NORMAL_HEIGHT, left: node.width/2 - 10, ...(greyedButtonStyle(node) as React.CSSProperties) }}
+                        style={{ top: -NORMAL_HEIGHT, left: node.width - 10, ...(greyedButtonStyle(node) as React.CSSProperties) }}
                         onClick={() => {
                             if (focusClicked === node) {
                                 setFocusClicked(null)

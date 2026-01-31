@@ -280,7 +280,7 @@ function SingleTablePanel({
                     {node.isOutdated && <span style={{ color: "#d32f2f", marginLeft: 8 }}>(outdated)</span>}
                 </span>
             </Tooltip>
-            <div style={{ flex: "1 1 auto", maxHeight: 320, overflowY: "auto", marginBottom: 0 }}>
+            <div style={{ width: "fit-content", maxHeight: 320, overflowY: "auto", marginBottom: 0 }}>
                 <DataGrid
                     rows={pagedRows}
                     columns={columns}

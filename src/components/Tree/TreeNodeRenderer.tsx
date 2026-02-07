@@ -7,6 +7,7 @@ import TableNode from "./Node/TableNode";
 type TreeNodeRendererProps = {
   node: PositionedTableNodeData;
   mode: "explore" | "query";
+  isSingleRuleTree: boolean;
   focusClicked: TreeNodeData | null;
   setFocusClicked: (node: TreeNodeData | null) => void;
   onAddAboveButtonClick: (ruleId: Rule, index: number) => void;
@@ -31,6 +32,7 @@ type TreeNodeRendererProps = {
 export default function TreeNodeRenderer({
   node,
   mode,
+  isSingleRuleTree,
   focusClicked,
   setFocusClicked,
   onRowClicked,
@@ -97,6 +99,7 @@ export default function TreeNodeRenderer({
         <RuleNode
             node={node.data}
             mode={mode}
+            isSingleRuleTree={isSingleRuleTree}
             onMouseLeftButton={onMouseLeftButton}
             giveFocusPreview={giveFocusPreview}
             focusClicked={focusClicked}

@@ -1,6 +1,6 @@
 import { useMemo, useRef, useEffect, useState } from 'react'
 import * as d3 from 'd3'
-import { TableNodeData, type TreeNodeData } from '../../data/TreeNodeData'
+import { RuleNodeData, TableNodeData, type TreeNodeData } from '../../data/TreeNodeData'
 import type { PositionedTableNodeData } from "../../data/TreeNodeData";
 import CustomLink from './CustomLink'
 import TreeNodeRenderer from './TreeNodeRenderer'
@@ -93,6 +93,22 @@ export default function Tree({
     const maxY = Math.max(...nodes.map((n: { y: number }) => n.y ?? 0));
     return { nodes, links, maxX, maxY };
   }, [data, width, height, treeVersion, mode]);
+
+  const isSingleRuleTree = useMemo(() => {
+    let ruleCount = 0;
+    const stack: TreeNodeData[] = [data];
+    while (stack.length) {
+      const current = stack.pop();
+      if (!current) continue;
+      if (current instanceof RuleNodeData) {
+        ruleCount += 1;
+        if (ruleCount > 1) return false;
+      }
+      const children = current.getChildren?.() ?? [];
+      for (const child of children) stack.push(child);
+    }
+    return ruleCount <= 1;
+  }, [data, treeVersion]);
 
   const padding = 100
   if (!width) width = 0;
@@ -217,6 +233,7 @@ useEffect(() => {
               key={i}
               node={node}
               mode={mode}
+              isSingleRuleTree={isSingleRuleTree}
               codingButtonClicked={codingButtonClicked}
               focusClicked={focusClicked}
               onMouseLeftButton={onMouseLeftButton}

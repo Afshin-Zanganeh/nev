@@ -206,7 +206,6 @@ export class TableNodeData extends TreeNodeData {
 		}
 	}
 
-	//is the value inside the table?
 	public isValueInsideTable(value: string): boolean {
 		if (!value || value.trim() === "") return false;
 		const searchValues = value.split(",").map(s => s.trim()).filter(Boolean);

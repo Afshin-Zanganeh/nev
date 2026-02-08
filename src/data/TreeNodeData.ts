@@ -216,7 +216,6 @@ export class TableNodeData extends TreeNodeData {
 		);
 	}
 
-	//does the predicate name match the search value?
 	public isPredicateNameMatch(value: string): boolean {
 		if (!value || value.trim() === "") return false;
 		const searchValues = value.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);

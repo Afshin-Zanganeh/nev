@@ -217,6 +217,14 @@ export class TableNodeData extends TreeNodeData {
 		);
 	}
 
+	//does the predicate name match the search value?
+	public isPredicateNameMatch(value: string): boolean {
+		if (!value || value.trim() === "") return false;
+		const searchValues = value.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+		const predicateName = this.name.toLowerCase();
+		return searchValues.some(val => predicateName.replace(/\s+/g, "") === val.replace(/\s+/g, ""));
+	}
+
 	public setCount(count: number) {
 		this.pagination.count = count;
 	}

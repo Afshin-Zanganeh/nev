@@ -13,6 +13,7 @@ type NodeProps = {
   focusClicked: TreeNodeData | null;
   setFocusClicked: (node: TreeNodeData | null) => void;
   mode: 'explore' | 'query';
+  isSingleRuleTree: boolean;
   onFocusButtonClick: (node: RuleNodeData) => void;
   onFocusNode: (node: RuleNodeData, bool?: boolean) => void;
   onCollapseButtonClick: (node: TreeNodeData, bool: boolean) => void;
@@ -26,6 +27,7 @@ type NodeProps = {
 export default function RuleNode({
   node,
   mode,
+  isSingleRuleTree,
   focusClicked,
   setFocusClicked,
   onMouseLeftButton,
@@ -63,7 +65,7 @@ export default function RuleNode({
             setHoveredNode(node);
         }}
       />
-      {hovered && mode === "query" && (
+      {hovered && mode === "query" && !isSingleRuleTree && (
         <Tooltip title="Focus on this rule!" placement="right" enterDelay={500}>
           <button
             type="button"
@@ -92,7 +94,7 @@ export default function RuleNode({
       )*/}
 
       {
-        (((hovered || focusClicked === node) && mode === "explore") || (mode === "query" && focusClicked === node)) && (
+        (((hovered || focusClicked === node) && mode === "explore") || (mode === "query" && focusClicked === node)) && !isSingleRuleTree && (
           <Tooltip title={node === focusClicked ? "Reset focus!" : "Focus on this rule!"} placement="right" enterDelay={500}>
             <button
               type="button"

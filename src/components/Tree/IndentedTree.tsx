@@ -49,6 +49,7 @@ export default function IndentedTree({ node, onNodeClick, hoveredNode, setHovere
       {rows.map((row, idx) => (
         <IndentedTreeRow
           key={idx}
+          rowIndex={idx + 1}
           row={row}
           onNodeClicked={onNodeClick}
           hoveredNode={hoveredNode}
@@ -61,11 +62,13 @@ export default function IndentedTree({ node, onNodeClick, hoveredNode, setHovere
 }
 
 function IndentedTreeRow({
+  rowIndex,
   row,
   onNodeClicked,
   hoveredNode,
   setHoveredNode
 }: Readonly<{
+  rowIndex: number
   row: FlatRow
   onNodeClicked: (node: TreeNodeData, bool: boolean) => void
   hoveredNode: TreeNodeData | null
@@ -116,6 +119,7 @@ function IndentedTreeRow({
       onNodeClicked(row.node, false);
     }}
   >
+    <span style={{ color: '#999', marginRight: '6px' }}>#{rowIndex}</span>
     {prefix}
     {(caret ? caret : ' ') + ' '}
     {(row.node instanceof TableNodeData)

@@ -158,8 +158,8 @@ function SingleTablePanel({
     const [pageSize] = useState(50);
     const entries = useMemo(() => node.getTableEntries(), [node, version]);
 
-    const pagedRows = entries.slice((page - 1) * pageSize, page * pageSize).map((row) => {
-        const rowObj: { id: string; [key: string]: string } = { id: `${row.entryId}` };
+    const pagedRows = entries.slice((page - 1) * pageSize, page * pageSize).map((row, idx) => {
+        const rowObj: { id: string; rowNumber: string; [key: string]: string } = { id: `${row.entryId}`, rowNumber: String((page - 1) * pageSize + idx + 1) };
         row.termTuple.forEach((val, colIdx) => {
             rowObj[`col${colIdx}`] = val;
         });
@@ -170,6 +170,13 @@ function SingleTablePanel({
     if (entries[0]) {
         if (mode === "query") {
             columns = [
+                {
+                    field: "rowNumber",
+                    headerName: "#",
+                    width: 50,
+                    sortable: false,
+                    filterable: false,
+                },
                 ...entries[0].termTuple.map((_, idx) => ({
                     field: `col${idx}`,
                     headerName: node.parameterPredicate[idx] === undefined ? `var${idx}` : `${node.parameterPredicate[idx]}`,
@@ -201,11 +208,20 @@ function SingleTablePanel({
                 }
             ];
         } else {
-            columns = entries[0].termTuple.map((_, idx) => ({
+            columns = [
+                {
+                    field: "rowNumber",
+                    headerName: "#",
+                    width: 50,
+                    sortable: false,
+                    filterable: false,
+                },
+                ...entries[0].termTuple.map((_, idx) => ({
                 field: `col${idx}`,
                 headerName: node.parameterPredicate[idx] === undefined ? `var${idx}` : `${node.parameterPredicate[idx]}`,
                 width: 150,
-            }));
+            }))
+            ];
         }
     }
 

@@ -149,6 +149,7 @@ function TableNodeDetails({ node, mode, onRowClicked, onPopOutClicked }: Readonl
               <table style={{ fontSize: "0.92em" }}>
                 <thead>
                   <tr>
+                    <th style={{ textAlign: "center" }}>#</th>
                     {columns.map((col, colIdx) => (
                       <th
                         key={colIdx}
@@ -168,6 +169,7 @@ function TableNodeDetails({ node, mode, onRowClicked, onPopOutClicked }: Readonl
                         key={rowKey}
                         style={{ height: "24px" }}
                       >
+                        <td style={{ textAlign: "center", color: "#666" }}>{idx + 1}</td>
                         {columns.map((col, colIdx) => {
                           const cellKey = `${rowKey}-${col.field}`;
                           return (

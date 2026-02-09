@@ -242,21 +242,21 @@ export class DataManager {
         node.removeChildren();
     }
 
-    //for highlighting of nodes, if they have specific values
+    //for highlighting of nodes, if they have specific values or match predicate names
     public searchForEntry(rootNode: TableNodeData, entry: string) {
         this.searchedEntry = entry;
         let foundSomething = false;
         const parents: TreeNodeData[] = [rootNode];
         rootNode.gotSearched = false; //reset the searched flag on the root node
 
-        if (rootNode.isValueInsideTable(entry)) {
+        if (rootNode.isValueInsideTable(entry) || rootNode.isPredicateNameMatch(entry)) {
             rootNode.gotSearched = true;
             foundSomething = true;
         }
         for (const parent of parents) {
             for (const child of parent.getChildren()) {
                 if (child instanceof TableNodeData) {
-                    const match = child.isValueInsideTable(entry); 
+                    const match = child.isValueInsideTable(entry) || child.isPredicateNameMatch(entry); 
                     child.gotSearched = match;
                     if (match) foundSomething = true;
                     parents.push(child);

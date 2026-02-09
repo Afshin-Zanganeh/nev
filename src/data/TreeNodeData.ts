@@ -206,7 +206,6 @@ export class TableNodeData extends TreeNodeData {
 		}
 	}
 
-	//is the value inside the table?
 	public isValueInsideTable(value: string): boolean {
 		if (!value || value.trim() === "") return false;
 		const searchValues = value.split(",").map(s => s.trim()).filter(Boolean);
@@ -215,6 +214,13 @@ export class TableNodeData extends TreeNodeData {
 				entries.some(cell => cell.replace(/\s+/g, "") === val.replace(/\s+/g, ""))
 			)
 		);
+	}
+
+	public isPredicateNameMatch(value: string): boolean {
+		if (!value || value.trim() === "") return false;
+		const searchValues = value.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+		const predicateName = this.name.toLowerCase();
+		return searchValues.some(val => predicateName.replace(/\s+/g, "") === val.replace(/\s+/g, ""));
 	}
 
 	public setCount(count: number) {

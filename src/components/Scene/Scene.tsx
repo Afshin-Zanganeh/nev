@@ -447,7 +447,7 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
           <ToggleButton value="query">Query</ToggleButton>
         </ToggleButtonGroup>
         </div>
-        <Tooltip title="Search for specific table entries!" placement="left" enterDelay={500}>
+        <Tooltip title="Search for specific table entries or predicate names!" placement="left" enterDelay={500}>
           <TextField
             margin="dense"
             label="Search"

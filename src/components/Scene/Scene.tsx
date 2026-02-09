@@ -7,11 +7,12 @@ import './../../assets/index.css'
 import SidePanel from "./SidePanel";
 import TableDialog from "./TableDialog";
 import type { Rule, TableEntriesForTreeNodesQuery, TableEntriesForTreeNodesResponse, TableEntryResponse, TreeForTableQuery, TreeForTableResponse } from "../../types/types";
-import { FaRedo, FaUndo, FaPenSquare, FaLock } from "react-icons/fa";
+import { FaRedo, FaUndo, FaPenSquare, FaLock, FaArrowUp, FaArrowDown } from "react-icons/fa";
 import TableDialogPanel from "./TableDialogPanel";
 import { HIGHLIGHTING_COLORS } from "../../types/constants";
 import EditQueryDialog from "./EditQueryDialog";
 import { StringFormatter } from "../../util/StringFormatter";
+import { findDeepestLeaf } from "../../util/findDeepestLeaf";
 import TextField from '@mui/material/TextField';
 import { ToggleButton, ToggleButtonGroup }  from "@mui/material";
 
@@ -290,6 +291,15 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
     sendType1Message(row, predicate);
   };
 
+  const handleJumpToRoot = () => {
+    setPanToNodeId({ node: rootNode, center: true });
+  };
+
+  const handleJumpToLeaf = () => {
+    const leaf = findDeepestLeaf(rootNode);
+    setPanToNodeId({ node: leaf, center: true });
+  };
+
   // Handle clicking a node in the tree (isExpanded)
   const handleNodeClick = (node: TreeNodeData) => {
     dataManager.changeNodeLayout(node, node.isExpanded);
@@ -423,7 +433,7 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
   return (
     <div style={{ position: "relative" }}>
       {/* Top right action buttons */}
-      <div style={{ position: "absolute", top: 16, right: 16, zIndex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
+      <div style={{ position: "absolute", top: 16, right: 16, zIndex: 1, display: "flex", flexDirection: "column", gap: 8, backgroundColor: "white", padding: 16, borderRadius: 8, boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
         <div style={{textAlign:"center"}}>
         <ToggleButtonGroup
           size="small"
@@ -560,6 +570,31 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
             />
           </Box>
         </Tooltip>
+
+        <Box sx={{ display: "flex", gap: 1.5, marginTop: 2 }}>
+          <Tooltip title="Jump to the root node of the tree!" placement="left" enterDelay={500}>
+            <Button
+              variant="contained"
+              size="small"
+              fullWidth
+              startIcon={<FaArrowUp />}
+              onClick={handleJumpToRoot}
+            >
+              Root
+            </Button>
+          </Tooltip>
+          <Tooltip title="Jump to the deepest leaf node of the tree!" placement="left" enterDelay={500}>
+            <Button
+              variant="contained"
+              size="small"
+              fullWidth
+              startIcon={<FaArrowDown />}
+              onClick={handleJumpToLeaf}
+            >
+              Leaf
+            </Button>
+          </Tooltip>
+        </Box>
       </div>
 
       {/* Snackbar for notifications */}

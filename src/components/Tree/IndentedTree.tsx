@@ -1,6 +1,7 @@
 import { Tooltip } from '@mui/material'
 import { TableNodeData, type TreeNodeData } from '../../data/TreeNodeData'
 import StringFormatter from '../../util/StringFormatter'
+import ColoredLogicText from '../ColoredLogicText'
 
 type FlatRow = {
   node: TreeNodeData
@@ -122,10 +123,12 @@ function IndentedTreeRow({
     <span style={{ color: '#999', marginRight: '6px' }}>#{rowIndex}</span>
     {prefix}
     {(caret ? caret : ' ') + ' '}
-    {(row.node instanceof TableNodeData)
-      ? StringFormatter.formatPredicate(row.node.getName(), false, row.node.parameterPredicate)
-      : StringFormatter.formatRuleName(row.node.getName(), false)
-    }
+    <ColoredLogicText
+      text={(row.node instanceof TableNodeData)
+        ? StringFormatter.formatPredicate(row.node.getName(), false, row.node.parameterPredicate)
+        : StringFormatter.formatRuleName(row.node.getName(), false)
+      }
+    />
   </div>
 );
 

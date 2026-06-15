@@ -2,6 +2,7 @@ import Tooltip from '@mui/material/Tooltip'
 import '../../../assets/NodeBox.css'
 import type { RuleNodeData } from '../../../data/TreeNodeData'
 import StringFormatter from '../../../util/StringFormatter'
+import ColoredLogicText from '../../ColoredLogicText'
 
 type NodeBoxProps = {
   node: RuleNodeData
@@ -23,7 +24,7 @@ export function RuleNodeBox({ node, onMouseEnter }: Readonly<NodeBoxProps>) {
         minHeight: 33,
       }}
     >
-      {StringFormatter.formatRuleName(ruleName, true)}
+      <ColoredLogicText text={StringFormatter.formatRuleName(ruleName, true)} />
     </div>
   );
 

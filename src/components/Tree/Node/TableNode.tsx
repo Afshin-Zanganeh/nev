@@ -15,6 +15,7 @@ import PositionDialog from './PositionDialog'
 type NodeProps = {
     node: TableNodeData,
     mode: 'explore' | 'query';
+    showExecutionTime: boolean;
     focusClicked: TreeNodeData | null;
     setFocusClicked: (node: TreeNodeData | null) => void;
     onAddAboveButtonClick: (ruleId: Rule, index: number) => void;
@@ -37,6 +38,7 @@ type NodeProps = {
 export default function TableNode({
     node,
     mode,
+    showExecutionTime,
     focusClicked,
     setFocusClicked,
     onAddAboveButtonClick,
@@ -88,6 +90,7 @@ export default function TableNode({
             <TableNodeBox
                 node={node}
                 mode={mode}
+                showExecutionTime={showExecutionTime}
                 isHovered={isHovered}
                 onNodeClicked={onNodeClicked}
                 onRowClicked={onRowClicked}

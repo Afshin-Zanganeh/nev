@@ -14,6 +14,7 @@ type PanToNode = { node: TreeNodeData, center?: boolean } | null;
 type TreeProps = {
   data: TableNodeData;
   mode: "explore" | "query";
+  showNodeExecutionTimes: boolean;
   treeVersion: number;
   panToNodeId?: PanToNode;
   setPanToNodeId?: (id: PanToNode) => void;
@@ -44,6 +45,7 @@ type TreeProps = {
 export default function Tree({
   data,
   mode,
+  showNodeExecutionTimes,
   width,
   height,
   panToNodeId,
@@ -81,7 +83,9 @@ export default function Tree({
 
     const layout = flextree({}).nodeSize((node: d3.HierarchyNode<unknown>) => [
       ((node.data as TableNodeData).width ?? 60) + 60,
-      ((node.data as TableNodeData).height ?? 120) + 100
+      ((node.data as TableNodeData).height ?? 120)
+        + (showNodeExecutionTimes && node.data instanceof TableNodeData && !(node.data as TableNodeData).isExpanded ? 18 : 0)
+        + 100
     ]);
 
     StringFormatter.getInstance().resetMaxLengthSlider(data);
@@ -92,7 +96,7 @@ export default function Tree({
     const maxX = Math.max(...nodes.map((n: { x: number }) => n.x ?? 0));
     const maxY = Math.max(...nodes.map((n: { y: number }) => n.y ?? 0));
     return { nodes, links, maxX, maxY };
-  }, [data, width, height, treeVersion, mode]);
+  }, [data, width, height, treeVersion, mode, showNodeExecutionTimes]);
 
   const isSingleRuleTree = useMemo(() => {
     let ruleCount = 0;
@@ -225,7 +229,12 @@ useEffect(() => {
         <g transform={transform.toString()}>
           {links
             .map((link: FlextreeLink, i: number) => (
-              <CustomLink key={i} source={link.source} target={link.target} />
+              <CustomLink
+                key={i}
+                source={link.source}
+                target={link.target}
+                showNodeExecutionTimes={showNodeExecutionTimes}
+              />
             ))}
 
           {nodes.map((node: PositionedTableNodeData, i: number) => (
@@ -233,6 +242,7 @@ useEffect(() => {
               key={i}
               node={node}
               mode={mode}
+              showNodeExecutionTimes={showNodeExecutionTimes}
               isSingleRuleTree={isSingleRuleTree}
               codingButtonClicked={codingButtonClicked}
               focusClicked={focusClicked}

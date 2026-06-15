@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Tree from "../Tree/Tree";
-import { Snackbar, Tooltip, Button, Slider, Box, Input, Alert } from "@mui/material";
+import { Snackbar, Tooltip, Button, Slider, Box, Input, Alert, FormControlLabel, Switch } from "@mui/material";
 import { DataManager } from "./DataManager";
 import { RuleNodeData, TableNodeData, TreeNodeData } from "../../data/TreeNodeData";
 import './../../assets/index.css'
@@ -89,6 +89,7 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
 
   const [editQueryOpen, setEditQueryOpen] = useState(false);
   const [maxLength, setMaxLength] = useState(StringFormatter.maxLengthSlider);
+  const [showNodeExecutionTimes, setShowNodeExecutionTimes] = useState(false);
 
   useEffect(() => {
     setMaxLength(StringFormatter.maxLengthSlider);
@@ -571,6 +572,20 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
           </Box>
         </Tooltip>
 
+        <Tooltip title="Show the total reasoning time directly on every table node." placement="left" enterDelay={500}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={showNodeExecutionTimes}
+                onChange={(_, checked) => setShowNodeExecutionTimes(checked)}
+                size="small"
+              />
+            }
+            label="Show total time per node"
+            sx={{ marginLeft: 0 }}
+          />
+        </Tooltip>
+
         <Box sx={{ display: "flex", gap: 1.5, marginTop: 2 }}>
           <Tooltip title="Jump to the root node of the tree!" placement="left" enterDelay={500}>
             <Button
@@ -644,6 +659,7 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
       <Tree
         data={rootNode}
         mode={mode}
+        showNodeExecutionTimes={showNodeExecutionTimes}
         giveRemoveAbovePreview={handleRemoveAbovePreview}
         giveRemoveBelowPreview={handleRemoveEdgePreview}
         panToNodeId={panToNodeId}

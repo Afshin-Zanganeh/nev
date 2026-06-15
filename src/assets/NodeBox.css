@@ -46,6 +46,22 @@
   min-height: 36px;
 }
 
+.table-node-box__header {
+  flex-direction: column;
+}
+
+.table-node-box__name {
+  white-space: nowrap;
+}
+
+.table-node-box__execution-time {
+  color: #4f6259;
+  font-size: 0.72em;
+  font-weight: normal;
+  line-height: 18px;
+  white-space: nowrap;
+}
+
 /* Body */
 .table-node-box__body {
   padding: 4px 0;

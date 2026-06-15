@@ -12,6 +12,7 @@ import type { TableEntryResponse } from '../../../types/types'
 type NodeBoxProps = {
   node: TableNodeData
   mode: 'explore' | 'query';
+  showExecutionTime: boolean;
   isHovered?: boolean
   onNodeClicked: (node: TreeNodeData) => void;
   clicked?: boolean
@@ -29,9 +30,11 @@ type TableNodeDetailsProps = {
 function TableNodeHeader({
   node,
   onClick,
+  showExecutionTime,
 }: {
   readonly node: TableNodeData;
   readonly onClick: () => void;
+  readonly showExecutionTime: boolean;
 }) {
   const name = node.getName();
   const needsTooltip = StringFormatter.needsTruncation(name);
@@ -51,10 +54,15 @@ function TableNodeHeader({
       >
         {needsTooltip ? (
           <Tooltip title={unshortenedFormattedName} placement="top" enterDelay={800}>
-            <span style={{ whiteSpace: "nowrap"}}>&nbsp;{formattedName}&nbsp;</span>
+            <span className="table-node-box__name">&nbsp;{formattedName}&nbsp;</span>
           </Tooltip>
         ) : (
-          <span style={{ whiteSpace: "nowrap"}}>&nbsp;{formattedName}&nbsp;</span>
+          <span className="table-node-box__name">&nbsp;{formattedName}&nbsp;</span>
+        )}
+        {showExecutionTime && !node.isExpanded && node.executionTime !== undefined && (
+          <span className="table-node-box__execution-time">
+            Total time: {node.executionTime} ms
+          </span>
         )}
       </div>
     </Tooltip>
@@ -241,7 +249,7 @@ function TableNodeDetails({ node, mode, onRowClicked, onPopOutClicked }: Readonl
   );
 }
 
-export function TableNodeBox({ node, mode, isHovered, clicked, onNodeClicked, onRowClicked, onPopOutClicked }: Readonly<NodeBoxProps>) {
+export function TableNodeBox({ node, mode, showExecutionTime, isHovered, clicked, onNodeClicked, onRowClicked, onPopOutClicked }: Readonly<NodeBoxProps>) {
   const outlineColor = HIGHLIGHTING_COLORS[node.isHighlighted] || undefined;
 
   return (
@@ -266,6 +274,7 @@ export function TableNodeBox({ node, mode, isHovered, clicked, onNodeClicked, on
       {<>
         <TableNodeHeader
           node={node}
+          showExecutionTime={showExecutionTime}
           onClick={() => {
             node.isExpanded = !node.isExpanded;
             onNodeClicked(node);

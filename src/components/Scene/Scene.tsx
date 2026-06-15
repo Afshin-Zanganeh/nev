@@ -173,6 +173,7 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
       const tftr = message.payload as TreeForTableResponse;
       const node = dataManager.handleType1Response(tftr);
       node.isRootNode = true;
+      dataManager.preserveExpandedPredicateNodes(rootNode, node);
       const qs = tftr.tableEntries.entries.map(e => e.termTuple.join(","));
       setRootNode(node);
       setQueries(qs);

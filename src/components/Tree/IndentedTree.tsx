@@ -43,6 +43,7 @@ type IndentedTreeProps = {
 
 export default function IndentedTree({ node, onNodeClick, hoveredNode, setHoveredNode }: IndentedTreeProps) {
   const rows = flattenTree(node)
+  const rowNumberWidth = `${String(rows.length).length + 1}ch`
 
   return (
     <div style={{ fontSize: 15, lineHeight: 1.2, width: "100%", boxSizing: "border-box" }}>
@@ -50,6 +51,7 @@ export default function IndentedTree({ node, onNodeClick, hoveredNode, setHovere
         <IndentedTreeRow
           key={idx}
           rowIndex={idx + 1}
+          rowNumberWidth={rowNumberWidth}
           row={row}
           onNodeClicked={onNodeClick}
           hoveredNode={hoveredNode}
@@ -63,12 +65,14 @@ export default function IndentedTree({ node, onNodeClick, hoveredNode, setHovere
 
 function IndentedTreeRow({
   rowIndex,
+  rowNumberWidth,
   row,
   onNodeClicked,
   hoveredNode,
   setHoveredNode
 }: Readonly<{
   rowIndex: number
+  rowNumberWidth: string
   row: FlatRow
   onNodeClicked: (node: TreeNodeData, bool: boolean) => void
   hoveredNode: TreeNodeData | null
@@ -119,7 +123,18 @@ function IndentedTreeRow({
       onNodeClicked(row.node, false);
     }}
   >
-    <span style={{ color: '#999', marginRight: '6px' }}>#{rowIndex}</span>
+    <span
+      style={{
+        color: '#999',
+        display: 'inline-block',
+        width: rowNumberWidth,
+        marginRight: '6px',
+        textAlign: 'right',
+        fontVariantNumeric: 'tabular-nums',
+      }}
+    >
+      #{rowIndex}
+    </span>
     {prefix}
     {(caret ? caret : ' ') + ' '}
     {(row.node instanceof TableNodeData)

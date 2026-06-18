@@ -1,5 +1,5 @@
 import { useContext, type ReactNode } from 'react'
-import { LogicColorizationContext } from './logicColorization'
+import { LOGIC_COLORIZATION_MODES, LogicColorizationContext } from './logicColorization'
 
 type ColoredLogicTextProps = {
   text: string
@@ -10,14 +10,40 @@ type ColoredLogicTextProps = {
 const TERM_PATTERN = /(\?[A-Za-z_][A-Za-z0-9_]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[A-Za-z_][A-Za-z0-9_]*|-?\d+(?:\.\d+)?)/g
 
 const TERM_COLORS = [
-  { text: '#a0006d', background: '#ffc4ea' },
-  { text: '#0756a3', background: '#b9dcff' },
-  { text: '#a13c00', background: '#ffd2ad' },
-  { text: '#b42318', background: '#ffc7c2' },
-  { text: '#5b21b6', background: '#dec9ff' },
-  { text: '#6f3f17', background: '#e7c8aa' },
-  { text: '#334155', background: '#d5dbe3' },
+  '#8f86bf',
+  '#d95f55',
+  '#1f9e89',
+  '#2f7fb8',
+  '#d6811c',
+  '#6fa632',
+  '#d66aa7',
+  '#7f7f7f',
+  '#9b5aa3',
+  '#6faa65',
+  '#c7a600',
 ] as const
+
+// const TERM_COLORS = [
+// '#8dd3c7',
+// '#ffffb3',
+// '#bebada',
+// '#fb8072',
+// '#80b1d3',
+// '#fdb462',
+// '#b3de69',
+// '#fccde5',
+// '#d9d9d9',
+// '#bc80bd',
+// '#ccebc5',
+// '#ffed6f',
+// ] as const
+
+
+const CODE_COLORS = {
+  rule: '#0000ff',
+  parameter: '#008000',
+  constant: '#800000',
+} as const
 
 function colorForIndex(index: number) {
   return TERM_COLORS[index % TERM_COLORS.length]
@@ -27,16 +53,26 @@ function isPredicateName(text: string, end: number) {
   return text.slice(end).trimStart().startsWith('(')
 }
 
+function codeColorForTerm(term: string, isRule: boolean) {
+  if (isRule) {
+    return CODE_COLORS.rule
+  }
+  if (term.startsWith('?')) {
+    return CODE_COLORS.parameter
+  }
+  return CODE_COLORS.constant
+}
+
 function ColoredTerm({ term, colorIndex }: Readonly<{ term: string; colorIndex: number }>) {
   const mode = useContext(LogicColorizationContext)
-  const color = colorForIndex(colorIndex)
+  if (mode === LOGIC_COLORIZATION_MODES.none) {
+    return term
+  }
+
   return (
     <span
       style={{
-        color: color.text,
-        backgroundColor: mode === 'background' ? color.background : undefined,
-        borderRadius: mode === 'background' ? 3 : undefined,
-        boxShadow: mode === 'background' ? `0 0 0 2px ${color.background}` : undefined,
+        color: mode === LOGIC_COLORIZATION_MODES.code ? codeColorForTerm(term, false) : colorForIndex(colorIndex),
       }}
     >
       {term}
@@ -44,11 +80,25 @@ function ColoredTerm({ term, colorIndex }: Readonly<{ term: string; colorIndex: 
   )
 }
 
+function ColoredCodeToken({ term, isRule }: Readonly<{ term: string; isRule: boolean }>) {
+  const mode = useContext(LogicColorizationContext)
+  if (mode !== LOGIC_COLORIZATION_MODES.code) {
+    return term
+  }
+
+  return <span style={{ color: codeColorForTerm(term, isRule) }}>{term}</span>
+}
+
 export default function ColoredLogicText({
   text,
   standaloneTerm = false,
   colorIndex = 0,
 }: Readonly<ColoredLogicTextProps>) {
+  const mode = useContext(LogicColorizationContext)
+  if (mode === LOGIC_COLORIZATION_MODES.none) {
+    return text
+  }
+
   if (standaloneTerm) {
     return <ColoredTerm term={text} colorIndex={colorIndex} />
   }
@@ -74,8 +124,12 @@ export default function ColoredLogicText({
     }
 
     const term = match[0]
+    const isRule = isPredicateName(text, end)
+    const shouldColorTextTerm = argumentIndexes.length > 0 && !isRule
     parts.push(
-      argumentIndexes.length > 0 && !isPredicateName(text, end)
+      mode === LOGIC_COLORIZATION_MODES.code
+        ? <ColoredCodeToken key={`${start}-${term}`} term={term} isRule={isRule} />
+        : shouldColorTextTerm
         ? <ColoredTerm
             key={`${start}-${term}`}
             term={term}
@@ -87,5 +141,5 @@ export default function ColoredLogicText({
   }
 
   parts.push(text.slice(cursor))
-  return <>{parts}</>
+  return <span style={{ whiteSpace: 'pre' }}>{parts}</span>
 }

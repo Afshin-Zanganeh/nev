@@ -16,7 +16,7 @@ import { findDeepestLeaf } from "../../util/findDeepestLeaf";
 import TextField from '@mui/material/TextField';
 import { ToggleButton, ToggleButtonGroup }  from "@mui/material";
 import ColoredLogicText from "../ColoredLogicText";
-import { LogicColorizationContext, type LogicColorizationMode } from "../logicColorization";
+import { LOGIC_COLORIZATION_MODES, LogicColorizationContext, type LogicColorizationMode } from "../logicColorization";
 
 type SceneProps = {
   error: string | null;
@@ -91,7 +91,7 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
 
   const [editQueryOpen, setEditQueryOpen] = useState(false);
   const [maxLength, setMaxLength] = useState(StringFormatter.maxLengthSlider);
-  const [colorizationMode, setColorizationMode] = useState<LogicColorizationMode>("text");
+  const [colorizationMode, setColorizationMode] = useState<LogicColorizationMode>(LOGIC_COLORIZATION_MODES.text);
 
   useEffect(() => {
     setMaxLength(StringFormatter.maxLengthSlider);
@@ -578,19 +578,38 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
         </Tooltip>
 
         <Tooltip
-          title="Switch between colored text and colored text with matching backgrounds."
+          title="Toggle logic variable text colors."
           placement="left"
           enterDelay={500}
         >
           <FormControlLabel
             sx={{ margin: 0, justifyContent: "space-between", fontSize: 14 }}
-            label="Color backgrounds"
+            label="Color variables"
             labelPlacement="start"
             control={
               <Switch
                 size="small"
-                checked={colorizationMode === "background"}
-                onChange={(_, checked) => setColorizationMode(checked ? "background" : "text")}
+                checked={colorizationMode === LOGIC_COLORIZATION_MODES.text}
+                onChange={(_, checked) => setColorizationMode(checked ? LOGIC_COLORIZATION_MODES.text : LOGIC_COLORIZATION_MODES.none)}
+              />
+            }
+          />
+        </Tooltip>
+
+        <Tooltip
+          title="Use Nemo-style code colors for rules, parameters, and constants."
+          placement="left"
+          enterDelay={500}
+        >
+          <FormControlLabel
+            sx={{ margin: 0, justifyContent: "space-between", fontSize: 14 }}
+            label="Code mode"
+            labelPlacement="start"
+            control={
+              <Switch
+                size="small"
+                checked={colorizationMode === LOGIC_COLORIZATION_MODES.code}
+                onChange={(_, checked) => setColorizationMode(checked ? LOGIC_COLORIZATION_MODES.code : LOGIC_COLORIZATION_MODES.none)}
               />
             }
           />

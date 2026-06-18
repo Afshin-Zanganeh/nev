@@ -11,7 +11,7 @@ const TERM_PATTERN = /(\?[A-Za-z_][A-Za-z0-9_]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\]
 
 const TERM_COLORS = [
   '#8f86bf',
-  '#d95f55',
+  '#fb8072',
   '#1f9e89',
   '#2f7fb8',
   '#d6811c',
@@ -22,22 +22,6 @@ const TERM_COLORS = [
   '#6faa65',
   '#c7a600',
 ] as const
-
-// const TERM_COLORS = [
-// '#8dd3c7',
-// '#ffffb3',
-// '#bebada',
-// '#fb8072',
-// '#80b1d3',
-// '#fdb462',
-// '#b3de69',
-// '#fccde5',
-// '#d9d9d9',
-// '#bc80bd',
-// '#ccebc5',
-// '#ffed6f',
-// ] as const
-
 
 const CODE_COLORS = {
   rule: '#0000ff',

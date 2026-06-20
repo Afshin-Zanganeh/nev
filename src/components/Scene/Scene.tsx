@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Tree from "../Tree/Tree";
-import { Snackbar, Tooltip, Button, Slider, Box, Input, Alert } from "@mui/material";
+import { Snackbar, Tooltip, Button, Slider, Box, Input, Alert, FormControlLabel, Switch } from "@mui/material";
 import { DataManager } from "./DataManager";
 import { RuleNodeData, TableNodeData, TreeNodeData } from "../../data/TreeNodeData";
 import './../../assets/index.css'
@@ -15,6 +15,8 @@ import { StringFormatter } from "../../util/StringFormatter";
 import { findDeepestLeaf } from "../../util/findDeepestLeaf";
 import TextField from '@mui/material/TextField';
 import { ToggleButton, ToggleButtonGroup }  from "@mui/material";
+import ColoredLogicText from "../ColoredLogicText";
+import { LOGIC_COLORIZATION_MODES, LogicColorizationContext, type LogicColorizationMode } from "../logicColorization";
 
 type SceneProps = {
   error: string | null;
@@ -89,6 +91,7 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
 
   const [editQueryOpen, setEditQueryOpen] = useState(false);
   const [maxLength, setMaxLength] = useState(StringFormatter.maxLengthSlider);
+  const [colorizationMode, setColorizationMode] = useState<LogicColorizationMode>(LOGIC_COLORIZATION_MODES.text);
 
   useEffect(() => {
     setMaxLength(StringFormatter.maxLengthSlider);
@@ -432,6 +435,7 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
   }
 
   return (
+    <LogicColorizationContext.Provider value={colorizationMode}>
     <div style={{ position: "relative" }}>
       {/* Top right action buttons */}
       <div style={{ position: "absolute", top: 16, right: 16, zIndex: 1, display: "flex", flexDirection: "column", gap: 8, backgroundColor: "white", padding: 16, borderRadius: 8, boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
@@ -501,7 +505,9 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
           <div>
             <b>Current Predicate:</b>
             <div style={{ whiteSpace: "nowrap" }}>
-              {rootNode.getName() || "—"}
+              {rootNode.getName()
+                ? <ColoredLogicText text={StringFormatter.getInstance().formatPredicate(rootNode.getName(), false, rootNode.parameterPredicate)} />
+                : "—"}
             </div>
           </div>
           <div style={{ marginTop: 4 }}>
@@ -570,6 +576,44 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
               sx={{ width: 60 }}
             />
           </Box>
+        </Tooltip>
+
+        <Tooltip
+          title="Toggle logic variable text colors."
+          placement="left"
+          enterDelay={500}
+        >
+          <FormControlLabel
+            sx={{ margin: 0, justifyContent: "space-between", fontSize: 14 }}
+            label="Color variables"
+            labelPlacement="start"
+            control={
+              <Switch
+                size="small"
+                checked={colorizationMode === LOGIC_COLORIZATION_MODES.text}
+                onChange={(_, checked) => setColorizationMode(checked ? LOGIC_COLORIZATION_MODES.text : LOGIC_COLORIZATION_MODES.none)}
+              />
+            }
+          />
+        </Tooltip>
+
+        <Tooltip
+          title="Use Nemo-style code colors for rules, parameters, and constants."
+          placement="left"
+          enterDelay={500}
+        >
+          <FormControlLabel
+            sx={{ margin: 0, justifyContent: "space-between", fontSize: 14 }}
+            label="Code mode"
+            labelPlacement="start"
+            control={
+              <Switch
+                size="small"
+                checked={colorizationMode === LOGIC_COLORIZATION_MODES.code}
+                onChange={(_, checked) => setColorizationMode(checked ? LOGIC_COLORIZATION_MODES.code : LOGIC_COLORIZATION_MODES.none)}
+              />
+            }
+          />
         </Tooltip>
 
         <Box sx={{ display: "flex", gap: 1.5, marginTop: 2 }}>
@@ -704,6 +748,7 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
         onApply={handleRestriction}
       />
     </div>
+    </LogicColorizationContext.Provider>
   );
 }
 

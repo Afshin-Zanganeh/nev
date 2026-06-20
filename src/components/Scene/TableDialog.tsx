@@ -11,6 +11,7 @@ import { FaMagnifyingGlass } from 'react-icons/fa6';
 import StringFormatter from '../../util/StringFormatter';
 import type { TableEntryResponse, TableColumn, ColumnParams } from '../../types/types';
 import PaginationBar from './Pagination';
+import ColoredLogicText from '../ColoredLogicText';
 
 type TableProps = {
     node: TableNodeData | null;
@@ -61,7 +62,14 @@ function TableDialog({
                 ...entries[0].termTuple.map((_, idx) => ({
                     field: `col${idx}`,
                     headerName: node.parameterPredicate[idx] === undefined ? `var${idx}` : `${node.parameterPredicate[idx]}`,
-                    width: 150
+                    width: 150,
+                    renderCell: (params: ColumnParams) => (
+                        <ColoredLogicText
+                            text={params.row[`col${idx}`] ?? ""}
+                            standaloneTerm
+                            colorIndex={idx}
+                        />
+                    ),
                 })),
                 {
                     field: "action",
@@ -99,7 +107,14 @@ function TableDialog({
                 ...entries[0].termTuple.map((_, idx) => ({
                 field: `col${idx}`,
                 headerName: node.parameterPredicate[idx] === undefined ? `var${idx}` : `${node.parameterPredicate[idx]}`,
-                width: 150
+                width: 150,
+                renderCell: (params: ColumnParams) => (
+                    <ColoredLogicText
+                        text={params.row[`col${idx}`] ?? ""}
+                        standaloneTerm
+                        colorIndex={idx}
+                    />
+                ),
             }))
             ];
         }
@@ -108,7 +123,7 @@ function TableDialog({
     return (
         <Dialog open={open} onClose={onClose} fullScreen scroll="paper">
             <DialogTitle>
-                Table: {StringFormatter.formatPredicate(node.getName(), false, node.parameterPredicate)}
+                Table: <ColoredLogicText text={StringFormatter.formatPredicate(node.getName(), false, node.parameterPredicate)} />
                 <Tooltip title="Leave fullscreen mode!" placement="left" enterDelay={500}>
                     <IconButton aria-label="panel" onClick={onTogglePanel} sx={{ position: "absolute", right: 8, top: 8 }}>
                         <FaCompress />

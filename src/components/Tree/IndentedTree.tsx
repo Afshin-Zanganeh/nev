@@ -119,7 +119,7 @@ function IndentedTreeRow({
       onNodeClicked(row.node, false);
     }}
   >
-    <span style={{ color: '#999', marginRight: '6px' }}>#{rowIndex}</span>
+    <span style={{ color: '#999', marginRight: '6px' }}>{rowIndex}</span>
     {prefix}
     {(caret ? caret : ' ') + ' '}
     {(row.node instanceof TableNodeData)

@@ -8,6 +8,7 @@ import StringFormatter from '../../../util/StringFormatter'
 import { FaMagnifyingGlass, FaTable } from 'react-icons/fa6'
 import { HIGHLIGHTING_COLORS } from '../../../types/constants'
 import type { TableEntryResponse } from '../../../types/types'
+import ColoredLogicText from '../../ColoredLogicText'
 
 type NodeBoxProps = {
   node: TableNodeData
@@ -54,10 +55,14 @@ function TableNodeHeader({
       >
         {needsTooltip ? (
           <Tooltip title={unshortenedFormattedName} placement="top" enterDelay={800}>
-            <span className="table-node-box__name">&nbsp;{formattedName}&nbsp;</span>
+            <span className="table-node-box__name" style={{ whiteSpace: "nowrap" }}>
+              &nbsp;<ColoredLogicText text={formattedName} />&nbsp;
+            </span>
           </Tooltip>
         ) : (
-          <span className="table-node-box__name">&nbsp;{formattedName}&nbsp;</span>
+          <span className="table-node-box__name" style={{ whiteSpace: "nowrap" }}>
+            &nbsp;<ColoredLogicText text={formattedName} />&nbsp;
+          </span>
         )}
         {showExecutionTime && !node.isExpanded && node.executionTime !== undefined && (
           <span className="table-node-box__execution-time">
@@ -191,7 +196,13 @@ function TableNodeDetails({ node, mode, onRowClicked, onPopOutClicked }: Readonl
                               >
                                 {col.renderCell(row)}
                               </td>
-                              : <td key={cellKey} style={{ padding: "3px 8px" }}>{row.termTuple[colIdx] ?? ""}</td>
+                              : <td key={cellKey} style={{ padding: "3px 8px" }}>
+                                <ColoredLogicText
+                                  text={row.termTuple[colIdx] ?? ""}
+                                  standaloneTerm
+                                  colorIndex={colIdx}
+                                />
+                              </td>
                           );
                         })}
                       </tr>

@@ -8,7 +8,7 @@ import { TbFocus2 } from 'react-icons/tb'
 import { greyedButtonStyle, NORMAL_HEIGHT } from '../../../types/constants'
 import { FaCodeFork, FaCodePullRequest, FaScissors } from 'react-icons/fa6'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
-import type { Rule, TableEntryResponse, Timeouts } from '../../../types/types'
+import type { Rule, TableEntryResponse } from '../../../types/types'
 import PositionDialog from './PositionDialog'
 
 
@@ -56,7 +56,6 @@ export default function TableNode({
 }: Readonly<NodeProps>) {
     const [hovered, setHovered] = useState(false)
     const [activeDialog, setActiveDialog] = useState<"above" | "below" | "pos" | null>(null)    
-    const [hoverMap] = useState<Timeouts>({});
 
     const handleRuleAboveSelect = (rule: Rule, index: number) => {
         setActiveDialog(null)
@@ -71,16 +70,11 @@ export default function TableNode({
         <div
             className={`custom-node${hovered ? ' hovered' : ''}`}
             onMouseLeave={() => {
-                const id = node.id.join('');
-                hoverMap[id] = setTimeout(() => {
-                    setHovered(false);
-                    setHoveredNode(null);
-                }, 1500) 
+                setHovered(false);
+                setHoveredNode(null);
             }}
 
             onMouseEnter={() => {
-                const id = node.id.join('');
-                clearTimeout(hoverMap[id]);
                 setHovered(true); 
                 setHoveredNode(node);
             }}

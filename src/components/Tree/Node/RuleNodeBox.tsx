@@ -7,9 +7,10 @@ import ColoredLogicText from '../../ColoredLogicText'
 type NodeBoxProps = {
   node: RuleNodeData
   onMouseEnter?: () => void
+  onClick?: () => void
 }
 
-export function RuleNodeBox({ node, onMouseEnter }: Readonly<NodeBoxProps>) {
+export function RuleNodeBox({ node, onMouseEnter, onClick }: Readonly<NodeBoxProps>) {
   const ruleName = node.getName();
   const needsTooltip = StringFormatter.needsRuleTruncation(ruleName);
 
@@ -17,6 +18,7 @@ export function RuleNodeBox({ node, onMouseEnter }: Readonly<NodeBoxProps>) {
     <div
       className={`rule-node-box${node.isGreyed ? ' node-grey' : ''}`}
       onMouseEnter={onMouseEnter}
+      onClick={onClick}
       style={{
         width: node.width,
         height: node.height,

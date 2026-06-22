@@ -17,6 +17,7 @@ import TextField from '@mui/material/TextField';
 import { ToggleButton, ToggleButtonGroup }  from "@mui/material";
 import ColoredLogicText from "../ColoredLogicText";
 import { LOGIC_COLORIZATION_MODES, LogicColorizationContext, type LogicColorizationMode } from "../logicColorization";
+import TreeBreadcrumb from "../Tree/TreeBreadcrumb";
 
 type SceneProps = {
   error: string | null;
@@ -28,6 +29,8 @@ type SceneProps = {
 // ...imports...
 
 function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps) {
+  const breadcrumbFooterHeight = 42;
+
   // State for window dimensions
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
@@ -45,6 +48,12 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
 
   // State for currently hovered node in the tree
   const [hoveredNode, setHoveredNode] = useState<TreeNodeData | null>(null);
+
+  // State for the node whose breadcrumb should remain visible after hover ends
+  const [breadcrumbNode, setBreadcrumbNode] = useState<TreeNodeData | null>(null);
+
+  // State for highlighting tree nodes when hovering breadcrumb items
+  const [breadcrumbHoveredNode, setBreadcrumbHoveredNode] = useState<TreeNodeData | null>(null);
 
   // State / Node for maximized table dialog
   const [maximizedTable, setMaximizedTable] = useState<TableNodeData | null>(null);
@@ -304,8 +313,19 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
     setPanToNodeId({ node: leaf, center: true });
   };
 
+  const handleBreadcrumbNodeClick = (node: TreeNodeData) => {
+    setBreadcrumbNode(node);
+    setPanToNodeId({ node, center: true });
+
+    if (mode === "explore") {
+      setFocusClicked(node);
+      handleFocusNode(node, false);
+    }
+  };
+
   // Handle clicking a node in the tree (isExpanded)
   const handleNodeClick = (node: TreeNodeData) => {
+    setBreadcrumbNode(node);
     dataManager.changeNodeLayout(node, node.isExpanded);
     setTreeVersion(v => v + 1);
   };
@@ -433,6 +453,9 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
     dataManager.setFlagFocusOnNode(rootNode, node, "isGreyed");
     setTreeVersion(v => v + 1);
   }
+
+  const currentBreadcrumbNode = hoveredNode ?? breadcrumbNode;
+  const highlightedNode = breadcrumbHoveredNode ?? currentBreadcrumbNode;
 
   return (
     <LogicColorizationContext.Provider value={colorizationMode}>
@@ -692,11 +715,11 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
         giveRemoveAbovePreview={handleRemoveAbovePreview}
         giveRemoveBelowPreview={handleRemoveEdgePreview}
         panToNodeId={panToNodeId}
-        hoveredNode={hoveredNode}
+        hoveredNode={highlightedNode}
         setHoveredNode={setHoveredNode}
         treeVersion={treeVersion}
         width={dimensions.width}
-        height={dimensions.height}
+        height={Math.max(0, dimensions.height - breadcrumbFooterHeight)}
         codingButtonClicked={codingButtonClicked}
         onRemoveAboveButtonClick={handleRemoveAboveButtonClick}
         onRemoveBelowButtonClick={handleRemoveBelowButtonClick}
@@ -721,9 +744,10 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
         open={showSidePanel}
         onClose={() => setShowSidePanel(!showSidePanel)}
         rootNode={rootNode}
-        hoveredNode={hoveredNode}
+        hoveredNode={highlightedNode}
         setHoveredNode={setHoveredNode}
         onNodeClick={(node, bool) => {
+          setBreadcrumbNode(node);
           setPanToNodeId({ node: node, center: true });
 
           if (mode === "explore") {
@@ -738,6 +762,15 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
           }
         }}
       />
+
+      <div className="page-breadcrumb-footer">
+        <TreeBreadcrumb
+          rootNode={rootNode}
+          currentNode={currentBreadcrumbNode}
+          onNodeClick={handleBreadcrumbNodeClick}
+          onNodeHover={setBreadcrumbHoveredNode}
+        />
+      </div>
 
       <EditQueryDialog
         open={editQueryOpen}

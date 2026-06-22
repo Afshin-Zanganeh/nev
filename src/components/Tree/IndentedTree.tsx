@@ -1,7 +1,7 @@
 import { Tooltip } from '@mui/material'
 import { TableNodeData, type TreeNodeData } from '../../data/TreeNodeData'
-import StringFormatter from '../../util/StringFormatter'
 import ColoredLogicText from '../ColoredLogicText'
+import { formatNodeLabel } from './treeNodeLabel'
 
 type FlatRow = {
   node: TreeNodeData
@@ -47,19 +47,21 @@ export default function IndentedTree({ node, onNodeClick, hoveredNode, setHovere
   const rowNumberWidth = `${String(rows.length).length + 1}ch`
 
   return (
-    <div style={{ fontSize: 15, lineHeight: 1.2, width: "100%", boxSizing: "border-box" }}>
-      {rows.map((row, idx) => (
-        <IndentedTreeRow
-          key={idx}
-          rowIndex={idx + 1}
-          rowNumberWidth={rowNumberWidth}
-          row={row}
-          onNodeClicked={onNodeClick}
-          hoveredNode={hoveredNode}
-          setHoveredNode={setHoveredNode}
-        />
-      ))}
-      <div style={{ height: 18, userSelect: "none" }} />
+    <div className="indented-tree">
+      <div className="indented-tree__rows">
+        {rows.map((row, idx) => (
+          <IndentedTreeRow
+            key={idx}
+            rowIndex={idx + 1}
+            rowNumberWidth={rowNumberWidth}
+            row={row}
+            onNodeClicked={onNodeClick}
+            hoveredNode={hoveredNode}
+            setHoveredNode={setHoveredNode}
+          />
+        ))}
+        <div style={{ height: 18, userSelect: "none" }} />
+      </div>
     </div>
   )
 }
@@ -139,19 +141,14 @@ function IndentedTreeRow({
     {prefix}
     {(caret ? caret : ' ') + ' '}
     <ColoredLogicText
-      text={(row.node instanceof TableNodeData)
-        ? StringFormatter.formatPredicate(row.node.getName(), false, row.node.parameterPredicate)
-        : StringFormatter.formatRuleName(row.node.getName(), false)
-      }
+      text={formatNodeLabel(row.node)}
     />
   </div>
 );
 
   return (
     <Tooltip title={
-      (row.node instanceof TableNodeData)
-        ? StringFormatter.formatPredicate(row.node.getName(), false, row.node.parameterPredicate)
-        : StringFormatter.formatRuleName(row.node.getName(), false)
+      formatNodeLabel(row.node)
     } placement="right" enterDelay={500}>
       {content}
     </Tooltip>

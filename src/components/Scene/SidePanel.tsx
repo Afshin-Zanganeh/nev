@@ -89,7 +89,7 @@ export default function SidePanel({
               height: "100%",
               padding: 12,
               boxSizing: "border-box",
-              overflowY: "auto",
+              overflow: "hidden",
               transition: "width 0.2s",
             }}
           >

@@ -83,9 +83,7 @@ export default function Tree({
 
     const layout = flextree({}).nodeSize((node: d3.HierarchyNode<unknown>) => [
       ((node.data as TableNodeData).width ?? 60) + 60,
-      ((node.data as TableNodeData).height ?? 120)
-        + (showNodeExecutionTimes && node.data instanceof TableNodeData && !(node.data as TableNodeData).isExpanded ? 18 : 0)
-        + 100
+      ((node.data as TableNodeData).height ?? 120) + 100
     ]);
 
     StringFormatter.getInstance().resetMaxLengthSlider(data);
@@ -96,7 +94,7 @@ export default function Tree({
     const maxX = Math.max(...nodes.map((n: { x: number }) => n.x ?? 0));
     const maxY = Math.max(...nodes.map((n: { y: number }) => n.y ?? 0));
     return { nodes, links, maxX, maxY };
-  }, [data, width, height, treeVersion, mode, showNodeExecutionTimes]);
+  }, [data, width, height, treeVersion, mode]);
 
   const isSingleRuleTree = useMemo(() => {
     let ruleCount = 0;
@@ -113,6 +111,57 @@ export default function Tree({
     }
     return ruleCount <= 1;
   }, [data, treeVersion]);
+
+  const executionTimeRange = (() => {
+    const executionTimes: number[] = [];
+    const stack: TreeNodeData[] = [data];
+
+    while (stack.length) {
+      const current = stack.pop();
+      if (!current) continue;
+
+      if (current instanceof TableNodeData && Number.isFinite(current.executionTime)) {
+        executionTimes.push(current.executionTime);
+      }
+
+      stack.push(...(current.getChildren?.() ?? []));
+    }
+
+    if (executionTimes.length === 0) return null;
+
+    const sortedScaledTimes = executionTimes
+      .map(time => Math.log1p(time))
+      .sort((a, b) => a - b);
+
+    const quantile = (values: number[], q: number) => {
+      if (values.length === 1) return values[0];
+
+      const position = (values.length - 1) * q;
+      const base = Math.floor(position);
+      const rest = position - base;
+      const nextValue = values[base + 1];
+
+      if (nextValue === undefined) return values[base];
+
+      return values[base] + rest * (nextValue - values[base]);
+    };
+
+    const scaledMin = sortedScaledTimes[0];
+    const scaledMax = sortedScaledTimes[sortedScaledTimes.length - 1];
+    const firstQuartile = quantile(sortedScaledTimes, 0.25);
+    const thirdQuartile = quantile(sortedScaledTimes, 0.75);
+    const interquartileRange = thirdQuartile - firstQuartile;
+    const robustUpper = interquartileRange === 0
+      ? scaledMax
+      : Math.min(scaledMax, thirdQuartile + interquartileRange * 1.5);
+
+    return {
+      min: Math.min(...executionTimes),
+      max: Math.max(...executionTimes),
+      scaleMin: scaledMin,
+      scaleMax: Math.max(scaledMin, robustUpper),
+    };
+  })();
 
   const padding = 100
   if (!width) width = 0;
@@ -233,7 +282,6 @@ useEffect(() => {
                 key={i}
                 source={link.source}
                 target={link.target}
-                showNodeExecutionTimes={showNodeExecutionTimes}
               />
             ))}
 
@@ -243,6 +291,7 @@ useEffect(() => {
               node={node}
               mode={mode}
               showNodeExecutionTimes={showNodeExecutionTimes}
+              executionTimeRange={executionTimeRange}
               isSingleRuleTree={isSingleRuleTree}
               codingButtonClicked={codingButtonClicked}
               focusClicked={focusClicked}

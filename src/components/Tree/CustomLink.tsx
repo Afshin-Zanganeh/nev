@@ -1,19 +1,16 @@
 import '../../assets/Link.css'
-import { TableNodeData, type PositionedTableNodeData } from "../../data/TreeNodeData";
+import type { PositionedTableNodeData } from "../../data/TreeNodeData";
 import { EXTENDED_HEIGHT, NORMAL_HEIGHT } from "../../types/constants";
 
 type LinkProps = {
   source: PositionedTableNodeData;
   target: PositionedTableNodeData;
-  showNodeExecutionTimes: boolean;
 };
 
-export default function CustomLink({ source, target, showNodeExecutionTimes }: Readonly<LinkProps>) {
-  const compactExecutionTimeOffset =
-    showNodeExecutionTimes && source.data instanceof TableNodeData && !source.data.isExpanded ? 18 : 0;
+export default function CustomLink({ source, target }: Readonly<LinkProps>) {
   const sourcePoint = [
     source.x,
-    source.y + (source.data.isExpanded ? EXTENDED_HEIGHT + 4 : NORMAL_HEIGHT * 3 - 9 + compactExecutionTimeOffset)
+    source.y + (source.data.isExpanded ? EXTENDED_HEIGHT + 4 : NORMAL_HEIGHT * 3 - 9)
   ]
   
   const targetPoint = [

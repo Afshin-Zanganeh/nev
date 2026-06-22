@@ -7,6 +7,13 @@ export type Timeouts = {
     [key: string]: number;
 };
 
+export type ExecutionTimeRange = {
+  min: number;
+  max: number;
+  scaleMin: number;
+  scaleMax: number;
+} | null;
+
 export type UndoRedoStateRule = {
   rule: Rule;
   isCollapsed?: boolean;

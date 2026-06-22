@@ -579,18 +579,27 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
           </Box>
         </Tooltip>
 
-        <Tooltip title="Show the total reasoning time directly on every table node." placement="left" enterDelay={500}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={showNodeExecutionTimes}
-                onChange={(_, checked) => setShowNodeExecutionTimes(checked)}
-                size="small"
-              />
-            }
-            label="Show total time per node"
-            sx={{ marginLeft: 0 }} />
-          </Tooltip>
+        <Tooltip
+          title="Show or hide the bottom color strip that compares each node's reasoning time."
+          placement="left"
+          enterDelay={2000}
+          enterNextDelay={2000}
+        >
+          <span>
+            <FormControlLabel
+              sx={{ margin: 0, justifyContent: "space-between", fontSize: 14, width: "100%" }}
+              label="Show time strips"
+              labelPlacement="start"
+              control={
+                <Switch
+                  checked={showNodeExecutionTimes}
+                  onChange={(_, checked) => setShowNodeExecutionTimes(checked)}
+                  size="small"
+                />
+              }
+            />
+          </span>
+        </Tooltip>
         <Tooltip
           title="Toggle logic variable text colors."
           placement="left"

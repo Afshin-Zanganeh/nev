@@ -14,6 +14,7 @@ type PanToNode = { node: TreeNodeData, center?: boolean } | null;
 type TreeProps = {
   data: TableNodeData;
   mode: "explore" | "query";
+  showNodeExecutionTimes: boolean;
   treeVersion: number;
   panToNodeId?: PanToNode;
   setPanToNodeId?: (id: PanToNode) => void;
@@ -44,6 +45,7 @@ type TreeProps = {
 export default function Tree({
   data,
   mode,
+  showNodeExecutionTimes,
   width,
   height,
   panToNodeId,
@@ -109,6 +111,57 @@ export default function Tree({
     }
     return ruleCount <= 1;
   }, [data, treeVersion]);
+
+  const executionTimeRange = (() => {
+    const executionTimes: number[] = [];
+    const stack: TreeNodeData[] = [data];
+
+    while (stack.length) {
+      const current = stack.pop();
+      if (!current) continue;
+
+      if (current instanceof TableNodeData && Number.isFinite(current.executionTime)) {
+        executionTimes.push(current.executionTime);
+      }
+
+      stack.push(...(current.getChildren?.() ?? []));
+    }
+
+    if (executionTimes.length === 0) return null;
+
+    const sortedScaledTimes = executionTimes
+      .map(time => Math.log1p(time))
+      .sort((a, b) => a - b);
+
+    const quantile = (values: number[], q: number) => {
+      if (values.length === 1) return values[0];
+
+      const position = (values.length - 1) * q;
+      const base = Math.floor(position);
+      const rest = position - base;
+      const nextValue = values[base + 1];
+
+      if (nextValue === undefined) return values[base];
+
+      return values[base] + rest * (nextValue - values[base]);
+    };
+
+    const scaledMin = sortedScaledTimes[0];
+    const scaledMax = sortedScaledTimes[sortedScaledTimes.length - 1];
+    const firstQuartile = quantile(sortedScaledTimes, 0.25);
+    const thirdQuartile = quantile(sortedScaledTimes, 0.75);
+    const interquartileRange = thirdQuartile - firstQuartile;
+    const robustUpper = interquartileRange === 0
+      ? scaledMax
+      : Math.min(scaledMax, thirdQuartile + interquartileRange * 1.5);
+
+    return {
+      min: Math.min(...executionTimes),
+      max: Math.max(...executionTimes),
+      scaleMin: scaledMin,
+      scaleMax: Math.max(scaledMin, robustUpper),
+    };
+  })();
 
   const padding = 100
   if (!width) width = 0;
@@ -225,7 +278,11 @@ useEffect(() => {
         <g transform={transform.toString()}>
           {links
             .map((link: FlextreeLink, i: number) => (
-              <CustomLink key={i} source={link.source} target={link.target} />
+              <CustomLink
+                key={i}
+                source={link.source}
+                target={link.target}
+              />
             ))}
 
           {nodes.map((node: PositionedTableNodeData, i: number) => (
@@ -233,6 +290,8 @@ useEffect(() => {
               key={i}
               node={node}
               mode={mode}
+              showNodeExecutionTimes={showNodeExecutionTimes}
+              executionTimeRange={executionTimeRange}
               isSingleRuleTree={isSingleRuleTree}
               codingButtonClicked={codingButtonClicked}
               focusClicked={focusClicked}

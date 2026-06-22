@@ -7,12 +7,15 @@ import { IconButton } from '@mui/material'
 import StringFormatter from '../../../util/StringFormatter'
 import { FaMagnifyingGlass, FaTable } from 'react-icons/fa6'
 import { HIGHLIGHTING_COLORS } from '../../../types/constants'
-import type { TableEntryResponse } from '../../../types/types'
+import type { ExecutionTimeRange, TableEntryResponse } from '../../../types/types'
+import { getExecutionTimeStripeColor } from '../../../util/executionTimeColors'
 import ColoredLogicText from '../../ColoredLogicText'
 
 type NodeBoxProps = {
   node: TableNodeData
   mode: 'explore' | 'query';
+  showExecutionTime: boolean;
+  executionTimeRange: ExecutionTimeRange;
   isHovered?: boolean
   onNodeClicked: (node: TreeNodeData) => void;
   clicked?: boolean
@@ -52,10 +55,14 @@ function TableNodeHeader({
       >
         {needsTooltip ? (
           <Tooltip title={unshortenedFormattedName} placement="top" enterDelay={800}>
-            <span style={{ whiteSpace: "nowrap"}}>&nbsp;<ColoredLogicText text={formattedName} />&nbsp;</span>
+            <span className="table-node-box__name" style={{ whiteSpace: "nowrap" }}>
+              &nbsp;<ColoredLogicText text={formattedName} />&nbsp;
+            </span>
           </Tooltip>
         ) : (
-          <span style={{ whiteSpace: "nowrap"}}>&nbsp;<ColoredLogicText text={formattedName} />&nbsp;</span>
+          <span className="table-node-box__name" style={{ whiteSpace: "nowrap" }}>
+            &nbsp;<ColoredLogicText text={formattedName} />&nbsp;
+          </span>
         )}
       </div>
     </Tooltip>
@@ -248,8 +255,11 @@ function TableNodeDetails({ node, mode, onRowClicked, onPopOutClicked }: Readonl
   );
 }
 
-export function TableNodeBox({ node, mode, isHovered, clicked, onNodeClicked, onRowClicked, onPopOutClicked }: Readonly<NodeBoxProps>) {
+export function TableNodeBox({ node, mode, showExecutionTime, executionTimeRange, isHovered, clicked, onNodeClicked, onRowClicked, onPopOutClicked }: Readonly<NodeBoxProps>) {
   const outlineColor = HIGHLIGHTING_COLORS[node.isHighlighted] || undefined;
+  const executionTimeStripeColor = Number.isFinite(node.executionTime)
+    ? getExecutionTimeStripeColor(node.executionTime, executionTimeRange)
+    : undefined;
 
   return (
     <div
@@ -281,6 +291,13 @@ export function TableNodeBox({ node, mode, isHovered, clicked, onNodeClicked, on
 
         {node.isExpanded && (
           <TableNodeDetails node={node} mode={mode} onRowClicked={onRowClicked} onPopOutClicked={onPopOutClicked} />
+        )}
+        {showExecutionTime && executionTimeStripeColor && (
+          <div
+            className="table-node-box__execution-time-stripe"
+            style={{ backgroundColor: executionTimeStripeColor }}
+            title={`Execution time: ${node.executionTime} ms`}
+          />
         )}
       </>}
     </div>

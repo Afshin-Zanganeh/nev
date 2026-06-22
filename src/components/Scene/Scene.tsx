@@ -91,6 +91,7 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
 
   const [editQueryOpen, setEditQueryOpen] = useState(false);
   const [maxLength, setMaxLength] = useState(StringFormatter.maxLengthSlider);
+  const [showNodeExecutionTimes, setShowNodeExecutionTimes] = useState(false);
   const [colorizationMode, setColorizationMode] = useState<LogicColorizationMode>(LOGIC_COLORIZATION_MODES.text);
 
   useEffect(() => {
@@ -579,6 +580,27 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
         </Tooltip>
 
         <Tooltip
+          title="Show or hide the bottom color strip that compares each node's reasoning time."
+          placement="left"
+          enterDelay={2000}
+          enterNextDelay={2000}
+        >
+          <span>
+            <FormControlLabel
+              sx={{ margin: 0, justifyContent: "space-between", fontSize: 14, width: "100%" }}
+              label="Show time strips"
+              labelPlacement="start"
+              control={
+                <Switch
+                  checked={showNodeExecutionTimes}
+                  onChange={(_, checked) => setShowNodeExecutionTimes(checked)}
+                  size="small"
+                />
+              }
+            />
+          </span>
+        </Tooltip>
+        <Tooltip
           title="Toggle logic variable text colors."
           placement="left"
           enterDelay={500}
@@ -689,6 +711,7 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
       <Tree
         data={rootNode}
         mode={mode}
+        showNodeExecutionTimes={showNodeExecutionTimes}
         giveRemoveAbovePreview={handleRemoveAbovePreview}
         giveRemoveBelowPreview={handleRemoveEdgePreview}
         panToNodeId={panToNodeId}

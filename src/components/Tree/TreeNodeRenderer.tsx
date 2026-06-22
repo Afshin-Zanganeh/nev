@@ -1,12 +1,14 @@
 import { RuleNodeData, TableNodeData, TreeNodeData } from "../../data/TreeNodeData";
 import type { PositionedTableNodeData } from "../../data/TreeNodeData";
-import type { Rule, TableEntryResponse } from "../../types/types";
+import type { ExecutionTimeRange, Rule, TableEntryResponse } from "../../types/types";
 import RuleNode from "./Node/RuleNode";
 import TableNode from "./Node/TableNode";
 
 type TreeNodeRendererProps = {
   node: PositionedTableNodeData;
   mode: "explore" | "query";
+  showNodeExecutionTimes: boolean;
+  executionTimeRange: ExecutionTimeRange;
   isSingleRuleTree: boolean;
   focusClicked: TreeNodeData | null;
   setFocusClicked: (node: TreeNodeData | null) => void;
@@ -32,6 +34,8 @@ type TreeNodeRendererProps = {
 export default function TreeNodeRenderer({
   node,
   mode,
+  showNodeExecutionTimes,
+  executionTimeRange,
   isSingleRuleTree,
   focusClicked,
   setFocusClicked,
@@ -66,6 +70,8 @@ export default function TreeNodeRenderer({
         <TableNode
             node={node.data}
             mode={mode}
+            showExecutionTime={showNodeExecutionTimes}
+            executionTimeRange={executionTimeRange}
             setFocusClicked={setFocusClicked}
             focusClicked={focusClicked}
             onRowClicked={onRowClicked}

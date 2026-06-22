@@ -7,7 +7,12 @@ type ColoredLogicTextProps = {
   colorIndex?: number
 }
 
-const TERM_PATTERN = /(\?[A-Za-z_][A-Za-z0-9_]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[A-Za-z_][A-Za-z0-9_]*|-?\d+(?:\.\d+)?)/g
+const TERM_PATTERN = /(<[^>]*>|\?[A-Za-z_][A-Za-z0-9_]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[A-Za-z_][A-Za-z0-9_]*|-?\d+(?:\.\d+)?)/g
+
+type ArgumentFrame = {
+  argumentIndex: number
+  inheritedColorIndex: number | null
+}
 
 const TERM_COLORS = [
   '#8f86bf',
@@ -73,6 +78,11 @@ function ColoredCodeToken({ term, isRule }: Readonly<{ term: string; isRule: boo
   return <span style={{ color: codeColorForTerm(term, isRule) }}>{term}</span>
 }
 
+function getCurrentArgumentColorIndex(argumentFrames: ArgumentFrame[]) {
+  const frame = argumentFrames[argumentFrames.length - 1]
+  return frame.inheritedColorIndex ?? frame.argumentIndex
+}
+
 export default function ColoredLogicText({
   text,
   standaloneTerm = false,
@@ -88,8 +98,23 @@ export default function ColoredLogicText({
   }
 
   const parts: ReactNode[] = []
-  const argumentIndexes: number[] = []
+  const argumentFrames: ArgumentFrame[] = []
   let cursor = 0
+
+  const updateArgumentState = (syntaxText: string) => {
+    for (const character of syntaxText) {
+      if (character === '(') {
+        argumentFrames.push({
+          argumentIndex: 0,
+          inheritedColorIndex: argumentFrames.length > 0 ? getCurrentArgumentColorIndex(argumentFrames) : null,
+        })
+      } else if (character === ',' && argumentFrames.length > 0) {
+        argumentFrames[argumentFrames.length - 1].argumentIndex += 1
+      } else if (character === ')') {
+        argumentFrames.pop()
+      }
+    }
+  }
 
   for (const match of text.matchAll(TERM_PATTERN)) {
     const start = match.index
@@ -97,19 +122,11 @@ export default function ColoredLogicText({
     const precedingText = text.slice(cursor, start)
 
     parts.push(precedingText)
-    for (const character of precedingText) {
-      if (character === '(') {
-        argumentIndexes.push(0)
-      } else if (character === ',' && argumentIndexes.length > 0) {
-        argumentIndexes[argumentIndexes.length - 1] += 1
-      } else if (character === ')') {
-        argumentIndexes.pop()
-      }
-    }
+    updateArgumentState(precedingText)
 
     const term = match[0]
     const isRule = isPredicateName(text, end)
-    const shouldColorTextTerm = argumentIndexes.length > 0 && !isRule
+    const shouldColorTextTerm = argumentFrames.length > 0
     parts.push(
       mode === LOGIC_COLORIZATION_MODES.code
         ? <ColoredCodeToken key={`${start}-${term}`} term={term} isRule={isRule} />
@@ -117,7 +134,7 @@ export default function ColoredLogicText({
         ? <ColoredTerm
             key={`${start}-${term}`}
             term={term}
-            colorIndex={argumentIndexes[argumentIndexes.length - 1]}
+            colorIndex={getCurrentArgumentColorIndex(argumentFrames)}
           />
         : term
     )

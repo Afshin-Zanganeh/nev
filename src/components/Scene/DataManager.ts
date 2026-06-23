@@ -74,6 +74,39 @@ export class DataManager {
         return tableNode;
     }
 
+    public preserveExpandedPredicateNodes(previousRoot: TableNodeData, nextRoot: TableNodeData) {
+        const expandedNodes = new Set<string>();
+        const previousNodes: TableNodeData[] = [previousRoot];
+        const nodes: TableNodeData[] = [nextRoot];
+
+        for (const node of previousNodes) {
+            if (node.isExpanded) {
+                expandedNodes.add(`${node.id.join(",")}:${node.getName()}`);
+            }
+
+            const ruleNode = node.getChildren()[0];
+            if (ruleNode) {
+                previousNodes.push(...ruleNode.getChildren().filter(
+                    (child): child is TableNodeData => child instanceof TableNodeData
+                ));
+            }
+        }
+
+        for (const node of nodes) {
+            if (expandedNodes.has(`${node.id.join(",")}:${node.getName()}`)) {
+                node.isExpanded = true;
+                this.changeNodeLayout(node, true);
+            }
+
+            const ruleNode = node.getChildren()[0];
+            if (ruleNode) {
+                nodes.push(...ruleNode.getChildren().filter(
+                    (child): child is TableNodeData => child instanceof TableNodeData
+                ));
+            }
+        }
+    }
+
     public loadUndoEntry(json: UndoRedoState, ruleParameters: string[] = [], ownId: number[] = []): TableNodeData {
         let parameters = ruleParameters;
         if (ruleParameters.length === 0 && json.childInformation) parameters = json.childInformation.rule.relevantHeadPredicate.parameters!

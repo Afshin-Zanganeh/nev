@@ -8,13 +8,15 @@ import { TbFocus2 } from 'react-icons/tb'
 import { greyedButtonStyle, NORMAL_HEIGHT } from '../../../types/constants'
 import { FaCodeFork, FaCodePullRequest, FaScissors } from 'react-icons/fa6'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
-import type { Rule, TableEntryResponse, Timeouts } from '../../../types/types'
+import type { ExecutionTimeRange, Rule, TableEntryResponse, Timeouts } from '../../../types/types'
 import PositionDialog from './PositionDialog'
 
 
 type NodeProps = {
     node: TableNodeData,
     mode: 'explore' | 'query';
+    showExecutionTime: boolean;
+    executionTimeRange: ExecutionTimeRange;
     focusClicked: TreeNodeData | null;
     setFocusClicked: (node: TreeNodeData | null) => void;
     onAddAboveButtonClick: (ruleId: Rule, index: number) => void;
@@ -37,6 +39,8 @@ type NodeProps = {
 export default function TableNode({
     node,
     mode,
+    showExecutionTime,
+    executionTimeRange,
     focusClicked,
     setFocusClicked,
     onAddAboveButtonClick,
@@ -88,6 +92,8 @@ export default function TableNode({
             <TableNodeBox
                 node={node}
                 mode={mode}
+                showExecutionTime={showExecutionTime}
+                executionTimeRange={executionTimeRange}
                 isHovered={isHovered}
                 onNodeClicked={onNodeClicked}
                 onRowClicked={onRowClicked}

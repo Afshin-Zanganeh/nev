@@ -12,6 +12,8 @@
 }
 .table-node-box {
   border-radius: 8px;
+  overflow: visible;
+  position: relative;
 }
 .table-node-box--highlighted {
   outline: 3px solid #ffb300;
@@ -44,6 +46,27 @@
   align-items: center;
   justify-content: center;
   min-height: 36px;
+}
+
+.table-node-box__header {
+  flex-direction: column;
+}
+
+.table-node-box__name {
+  white-space: nowrap;
+}
+
+.table-node-box__execution-time-stripe {
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  height: 6px;
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+  z-index: 4;
+  pointer-events: none;
+  transition: background-color 0.18s ease;
 }
 
 /* Body */

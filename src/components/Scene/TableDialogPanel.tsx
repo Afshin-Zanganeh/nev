@@ -13,6 +13,7 @@ import StringFormatter from '../../util/StringFormatter';
 import { HIGHLIGHTING_COLORS } from '../../types/constants';
 import type { TableEntryResponse, TableColumn, ColumnParams } from '../../types/types';
 import PaginationBar from './Pagination';
+import ColoredLogicText from '../ColoredLogicText';
 
 type TableDialogPanelProps = {
     nodes: TableNodeData[];
@@ -181,6 +182,13 @@ function SingleTablePanel({
                     field: `col${idx}`,
                     headerName: node.parameterPredicate[idx] === undefined ? `var${idx}` : `${node.parameterPredicate[idx]}`,
                     width: 150,
+                    renderCell: (params: ColumnParams) => (
+                        <ColoredLogicText
+                            text={params.row[`col${idx}`] ?? ""}
+                            standaloneTerm
+                            colorIndex={idx}
+                        />
+                    ),
                 })),
                 {
                     field: "action",
@@ -220,6 +228,13 @@ function SingleTablePanel({
                 field: `col${idx}`,
                 headerName: node.parameterPredicate[idx] === undefined ? `var${idx}` : `${node.parameterPredicate[idx]}`,
                 width: 150,
+                renderCell: (params: ColumnParams) => (
+                    <ColoredLogicText
+                        text={params.row[`col${idx}`] ?? ""}
+                        standaloneTerm
+                        colorIndex={idx}
+                    />
+                ),
             }))
             ];
         }
@@ -292,7 +307,7 @@ function SingleTablePanel({
                         marginBottom: 12
                     }}
                 >
-                    Table: {StringFormatter.formatPredicate(node.getName(), false, node.parameterPredicate)}
+                    Table: <ColoredLogicText text={StringFormatter.formatPredicate(node.getName(), false, node.parameterPredicate)} />
                     {node.isOutdated && <span style={{ color: "#d32f2f", marginLeft: 8 }}>(outdated)</span>}
                 </span>
             </Tooltip>

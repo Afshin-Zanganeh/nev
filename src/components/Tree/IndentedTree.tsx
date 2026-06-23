@@ -134,7 +134,7 @@ function IndentedTreeRow({
         fontVariantNumeric: 'tabular-nums',
       }}
     >
-      #{rowIndex}
+      {rowIndex}
     </span>
     {prefix}
     {(caret ? caret : ' ') + ' '}

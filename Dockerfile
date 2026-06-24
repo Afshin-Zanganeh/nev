@@ -25,7 +25,7 @@ RUN cd nemo-vsx && npm run package
 FROM node-builder AS nemo-web 
 WORKDIR /web
 
-RUN git clone --branch nemo-session-ids https://github.com/knowsys/nemo-web.git
+RUN git clone https://github.com/knowsys/nemo-web.git
 
 COPY --from=vscode-extension /vsx/nemo-vsx/nemo-0.0.17.vsix /web/nemo-web/nemoVSIX/nemo.vsix
 COPY --from=rust /nemo/nemo/result/lib/node_modules/nemo-wasm /web/nemo-web/nemoWASMBundler

@@ -4,12 +4,12 @@ import type { TableEntriesForTreeNodesQuery, TreeForTableQuery, TableEntriesForT
 import type { TreeNodeData } from "./data/TreeNodeData";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import shortid from 'shortid';
+import { nanoid } from 'nanoid';
 
 function App() {
   const bcRef = useRef<BroadcastChannel | null>(null);
-  const [id] = useState(shortid.generate());
-  const [message, setMessage] = useState<{ responseType: string, payload: TableEntriesForTreeNodesResponse | TreeForTableResponse } | null>(null);
+  const [id] = useState(nanoid());
+  const [message, setMessage] = useState<{ nemoId: String, responseType: string, payload: TableEntriesForTreeNodesResponse | TreeForTableResponse } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [backdropOpen, setBackdropOpen] = useState(true);
 
@@ -27,6 +27,7 @@ function App() {
           setError(event.data.error);  
         } else {
           setMessage(event.data);
+          console.log(message?.nemoId)
         }
       }
     });
@@ -35,8 +36,10 @@ function App() {
   }, [id]);
 
   const sendMessage = (msg: { queryType: string, payload: TableEntriesForTreeNodesQuery | TreeForTableQuery }) => {
+    const params = new URLSearchParams(window.location.search);
     const idmsg = { 
       id,
+      nemoId: message?.nemoId || params.get("nemoId"),
       queryType: msg.queryType, 
       payload: msg.payload, 
     };

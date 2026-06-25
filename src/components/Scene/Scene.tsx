@@ -22,7 +22,7 @@ type SceneProps = {
   error: string | null;
   message: { responseType: string, payload: TableEntriesForTreeNodesResponse | TreeForTableResponse } | null;
   sendMessage: (msg: { queryType: string, payload: TableEntriesForTreeNodesQuery | TreeForTableQuery }) => void;
-  codingButtonClicked: (node: TreeNodeData) => void; // Optional prop for coding button click handler
+  codingButtonClicked: (node: RuleNodeData) => void; // Optional prop for coding button click handler
 };
 
 // ...imports...

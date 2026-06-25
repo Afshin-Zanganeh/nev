@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Scene from './components/Scene/Scene';
 import type { TableEntriesForTreeNodesQuery, TreeForTableQuery, TableEntriesForTreeNodesResponse, TreeForTableResponse } from "./types/types";
-import type { TreeNodeData } from "./data/TreeNodeData";
+import type { RuleNodeData, TreeNodeData } from "./data/TreeNodeData";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { nanoid } from 'nanoid';
@@ -35,7 +35,7 @@ function App() {
     return () => bc.close();
   }, [id]);
 
-  const sendMessage = (msg: { queryType: string, payload: TableEntriesForTreeNodesQuery | TreeForTableQuery }) => {
+  const sendMessage = (msg: { queryType: string, payload: TableEntriesForTreeNodesQuery | TreeForTableQuery | { id:number } }) => {
     const params = new URLSearchParams(window.location.search);
     const idmsg = { 
       id,
@@ -69,8 +69,11 @@ function App() {
     })
   }, []);
 
-  const handleCodingButtonClicked = (node: TreeNodeData) => {
-    console.log("CodingButton clicked on Node: ", node.id)
+  const handleCodingButtonClicked = (node: RuleNodeData) => {
+    sendMessage({
+      queryType: "jumpToRule",
+      payload: { id: node.ruleId.id }
+    });
   }
 
   return (

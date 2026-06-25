@@ -1,12 +1,12 @@
 import type { RuleNodeData, TreeNodeData } from '../../../data/TreeNodeData'
 import { useState } from 'react'
-import '../../../assets/Node.css'
 import { RuleNodeBox } from './RuleNodeBox'
 import { Tooltip } from '@mui/material'
 import { TbFocus2 } from 'react-icons/tb'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
 import { greyedButtonStyle } from '../../../types/constants'
 import { type Timeouts } from '../../../types/types'
+import { FaLaptopCode } from 'react-icons/fa'
 
 type NodeProps = {
   node: RuleNodeData;
@@ -20,7 +20,7 @@ type NodeProps = {
   isHovered?: boolean;
   onMouseLeftButton: () => void;
   giveFocusPreview: (node: TreeNodeData) => void;
-  codingButtonClicked: (node: TreeNodeData) => void;
+  codingButtonClicked: (node: RuleNodeData) => void;
   setHoveredNode: (node: TreeNodeData | null) => void;
 }
 
@@ -31,6 +31,7 @@ export default function RuleNode({
   focusClicked,
   setFocusClicked,
   onMouseLeftButton,
+  codingButtonClicked,
   giveFocusPreview,
   onCollapseButtonClick,
   onFocusButtonClick,
@@ -80,8 +81,8 @@ export default function RuleNode({
         </Tooltip>
       )}
 
-      {/*hovered && mode === "explore" && (
-        <Tooltip title={"Highlight in Code!"} placement="right" enterDelay={500}>
+      {hovered && (
+        <Tooltip title={"Highlight in Code! (switches to Nemo Web tab)"} placement="right" enterDelay={500}>
           <button
             type="button"
             className="custom-node-btn-side-left"
@@ -91,7 +92,7 @@ export default function RuleNode({
             <FaLaptopCode />
           </button>
         </Tooltip>
-      )*/}
+      )}
 
       {
         (((hovered || focusClicked === node) && mode === "explore") || (mode === "query" && focusClicked === node)) && !isSingleRuleTree && (

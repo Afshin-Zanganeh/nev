@@ -99,26 +99,6 @@ export default function TableNode({
                 onRowClicked={onRowClicked}
                 onPopOutClicked={onPopOutClicked}
             />
-            {(((hovered || focusClicked === node) && mode === "explore") || (mode === "query" && focusClicked === node))  && (
-                <Tooltip title={node === focusClicked ? "Reset focus!" : "Focus on this node!"} placement="right" enterDelay={500}>
-                    <button
-                        type="button"
-                        className="custom-node-btn-corner-base custom-node-btn-corner-explore"
-                        style={{ top: -NORMAL_HEIGHT, left: node.width - 10, ...(greyedButtonStyle(node) as React.CSSProperties) }}
-                        onClick={() => {
-                            if (focusClicked === node) {
-                                setFocusClicked(null)
-                            }
-                            else {
-                                setFocusClicked(node)
-                            }
-                            onFocusButtonClick(node, node === focusClicked)
-                        }}
-                    >
-                        <TbFocus2 />
-                    </button>
-                </Tooltip>
-            )}
             {
                 node.isRootNode && node.hasRulseAbove() && mode === "query" && (
                     <Tooltip title="Add a new rule above the root!" placement="right" enterDelay={500}>
@@ -227,19 +207,6 @@ export default function TableNode({
                     </Tooltip>
                 )
             }
-
-            {/*hovered && mode === "explore" && (
-                <Tooltip title={"Highlight in Code!"} placement="right" enterDelay={500}>
-                    <button
-                        type="button"
-                        className="custom-node-btn-side-left"
-                        style={{ right: node.width, ...(greyedButtonStyle(node) as React.CSSProperties) }}
-                        onClick={() => codingButtonClicked(node)}
-                    >
-                        <FaLaptopCode />
-                    </button>
-                </Tooltip>
-            )*/}
 
             {/* RulesAbove */}
             <AddRuleDialog 

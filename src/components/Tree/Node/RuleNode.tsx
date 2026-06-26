@@ -6,7 +6,6 @@ import { TbFocus2 } from 'react-icons/tb'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
 import { greyedButtonStyle } from '../../../types/constants'
 import { type Timeouts } from '../../../types/types'
-import { FaLaptopCode } from 'react-icons/fa'
 
 type NodeProps = {
   node: RuleNodeData;
@@ -65,6 +64,7 @@ export default function RuleNode({
             setHovered(true); 
             setHoveredNode(node);
         }}
+        onClick={() => codingButtonClicked(node)}
       />
       {hovered && mode === "query" && !isSingleRuleTree && (
         <Tooltip title="Focus on this rule!" placement="right" enterDelay={500}>
@@ -72,24 +72,11 @@ export default function RuleNode({
             type="button"
             className="custom-node-btn-corner-base custom-node-btn-corner"
             style={{ top: -node.height, left: node.width - 10, ...(greyedButtonStyle(node) as React.CSSProperties) }}
-            onClick={() => onFocusButtonClick(node)}
+            onClick={() => {onFocusButtonClick(node);codingButtonClicked(node)}}
             onMouseEnter={() => giveFocusPreview(node)}
             onMouseLeave={onMouseLeftButton}
           >
             <TbFocus2 />
-          </button>
-        </Tooltip>
-      )}
-
-      {hovered && (
-        <Tooltip title={"Highlight in Code! (switches to Nemo Web tab)"} placement="right" enterDelay={500}>
-          <button
-            type="button"
-            className="custom-node-btn-side-left"
-            style={{ right: node.width, ...(greyedButtonStyle(node) as React.CSSProperties) }}
-            onClick={() => codingButtonClicked(node)}
-          >
-            <FaLaptopCode />
           </button>
         </Tooltip>
       )}
@@ -107,6 +94,7 @@ export default function RuleNode({
                 }
                 else {
                   setFocusClicked(node)
+                  codingButtonClicked(node)
                 }
                 onFocusNode(node, node === focusClicked)
               }}

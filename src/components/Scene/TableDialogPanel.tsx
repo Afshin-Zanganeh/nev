@@ -40,7 +40,7 @@ export default function TableDialogPanel({
     version,
     onMaximizeTable
 }: Readonly<TableDialogPanelProps>) {
-    const [panelHeight, setPanelHeight] = useState(450);
+    const [_, setPanelHeight] = useState(0);
     
     if (!nodes || nodes.length === 0) return null;
     return (
@@ -56,13 +56,14 @@ export default function TableDialogPanel({
                 p: 2,
                 zIndex: 5,
                 overflowY: 'auto',
-                transition: "height 0.2s"
+                transition: "height 0.2s",
+                padding: 0
             }}
             transitionDuration={300}
             variant="persistent"
         >
             <Resizable
-                size={{ width: "100%", height: panelHeight }}
+                size={{ width: "100%" }}
                 minHeight={150}
                 maxHeight={window.innerHeight - 100}
                 enable={{ top: true }}
@@ -311,7 +312,7 @@ function SingleTablePanel({
                     {node.isOutdated && <span style={{ color: "#d32f2f", marginLeft: 8 }}>(outdated)</span>}
                 </span>
             </Tooltip>
-            <div style={{ flex: "1 1 auto", maxHeight: 320, overflowY: "auto", marginBottom: 0 }}>
+            <div style={{ flex: "1 1 auto", maxHeight: 200, overflowY: "auto", marginBottom: 0 }}>
                 <DataGrid
                     rows={pagedRows}
                     columns={columns}

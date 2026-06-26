@@ -20,11 +20,12 @@
     "@types/d3-flextree": "^2.1.4",
     "d3": "^7.9.0",
     "d3-flextree": "^2.1.2",
+    "nanoid": "^5.1.15",
     "re-resizable": "^6.11.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
-    "nanoid": "^5.1.15"
+    "typeface-roboto": "^1.1.13"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

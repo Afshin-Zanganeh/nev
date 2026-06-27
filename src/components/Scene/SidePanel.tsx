@@ -1,6 +1,7 @@
 import IndentedTree from "../Tree/IndentedTree";
 import { TreeNodeData } from "../../data/TreeNodeData";
 import '../../assets/Overlay.css'
+import 'typeface-roboto';
 import { Tooltip } from '@mui/material';
 import { useState } from 'react';
 import { Resizable } from "re-resizable";
@@ -88,7 +89,8 @@ export default function SidePanel({
               background: "#fff",
               boxShadow: "2px 0 8px rgba(0,0,0,0.07)",
               height: "100%",
-              overflow: "hidden"
+              overflow: "hidden",
+              fontFamily: "Roboto",
             }}
           >
             <div

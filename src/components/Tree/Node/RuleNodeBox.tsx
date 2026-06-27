@@ -19,6 +19,7 @@ export function RuleNodeBox({ node, onMouseEnter, onClick }: Readonly<NodeBoxPro
       className={`rule-node-box${node.isGreyed ? ' node-grey' : ''}`}
       onMouseEnter={onMouseEnter}
       onClick={onClick}
+      title={"Click to Highlight this Rule in the code! (in Nemo Web)"}
       style={{
         width: node.width,
         height: node.height,

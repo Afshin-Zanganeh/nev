@@ -10,7 +10,7 @@ type LinkProps = {
 export default function CustomLink({ source, target }: Readonly<LinkProps>) {
   const sourcePoint = [
     source.x,
-    source.y + (source.data.isExpanded ? EXTENDED_HEIGHT + 4: NORMAL_HEIGHT * 3 - 9)
+    source.y + (source.data.isExpanded ? EXTENDED_HEIGHT + 4 : NORMAL_HEIGHT * 3 - 9)
   ]
   
   const targetPoint = [

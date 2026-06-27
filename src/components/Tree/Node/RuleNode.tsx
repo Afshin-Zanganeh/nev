@@ -1,6 +1,5 @@
 import type { RuleNodeData, TreeNodeData } from '../../../data/TreeNodeData'
 import { useState } from 'react'
-import '../../../assets/Node.css'
 import { RuleNodeBox } from './RuleNodeBox'
 import { Tooltip } from '@mui/material'
 import { TbFocus2 } from 'react-icons/tb'
@@ -20,7 +19,7 @@ type NodeProps = {
   isHovered?: boolean;
   onMouseLeftButton: () => void;
   giveFocusPreview: (node: TreeNodeData) => void;
-  codingButtonClicked: (node: TreeNodeData) => void;
+  codingButtonClicked: (node: RuleNodeData) => void;
   setHoveredNode: (node: TreeNodeData | null) => void;
 }
 
@@ -31,6 +30,7 @@ export default function RuleNode({
   focusClicked,
   setFocusClicked,
   onMouseLeftButton,
+  codingButtonClicked,
   giveFocusPreview,
   onCollapseButtonClick,
   onNodeClicked,
@@ -59,7 +59,10 @@ export default function RuleNode({
             setHovered(true); 
             setHoveredNode(node);
         }}
-        onClick={() => onNodeClicked(node)}
+        onClick={() => {
+          onNodeClicked(node)
+          codingButtonClicked(node)
+        }}
       />
       {hovered && mode === "query" && !isSingleRuleTree && (
         <Tooltip title="Focus on this rule!" placement="right" enterDelay={500}>
@@ -67,7 +70,7 @@ export default function RuleNode({
             type="button"
             className="custom-node-btn-corner-base custom-node-btn-corner"
             style={{ top: -node.height, left: node.width - 10, ...(greyedButtonStyle(node) as React.CSSProperties) }}
-            onClick={() => onFocusButtonClick(node)}
+            onClick={() => {onFocusButtonClick(node);codingButtonClicked(node)}}
             onMouseEnter={() => giveFocusPreview(node)}
             onMouseLeave={onMouseLeftButton}
           >
@@ -75,19 +78,6 @@ export default function RuleNode({
           </button>
         </Tooltip>
       )}
-
-      {/*hovered && mode === "explore" && (
-        <Tooltip title={"Highlight in Code!"} placement="right" enterDelay={500}>
-          <button
-            type="button"
-            className="custom-node-btn-side-left"
-            style={{ right: node.width, ...(greyedButtonStyle(node) as React.CSSProperties) }}
-            onClick={() => codingButtonClicked(node)}
-          >
-            <FaLaptopCode />
-          </button>
-        </Tooltip>
-      )*/}
 
       {
         (((hovered || focusClicked === node) && mode === "explore") || (mode === "query" && focusClicked === node)) && !isSingleRuleTree && (
@@ -102,6 +92,7 @@ export default function RuleNode({
                 }
                 else {
                   setFocusClicked(node)
+                  codingButtonClicked(node)
                 }
                 onFocusNode(node, node === focusClicked)
               }}

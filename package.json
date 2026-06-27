@@ -20,18 +20,18 @@
     "@types/d3-flextree": "^2.1.4",
     "d3": "^7.9.0",
     "d3-flextree": "^2.1.2",
+    "nanoid": "^5.1.15",
     "re-resizable": "^6.11.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
-    "shortid": "^2.2.17"
+    "typeface-roboto": "^1.1.13"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@types/d3": "^7.4.3",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
-    "@types/shortid": "^2.2.0",
     "@vitejs/plugin-react": "^4.4.1",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",

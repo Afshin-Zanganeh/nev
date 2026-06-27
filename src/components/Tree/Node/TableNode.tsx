@@ -8,13 +8,15 @@ import { TbFocus2 } from 'react-icons/tb'
 import { greyedButtonStyle, NORMAL_HEIGHT } from '../../../types/constants'
 import { FaCodeFork, FaCodePullRequest, FaScissors } from 'react-icons/fa6'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
-import type { Rule, TableEntryResponse } from '../../../types/types'
+import type { ExecutionTimeRange, Rule, TableEntryResponse, Timeouts } from '../../../types/types'
 import PositionDialog from './PositionDialog'
 
 
 type NodeProps = {
     node: TableNodeData,
     mode: 'explore' | 'query';
+    showExecutionTime: boolean;
+    executionTimeRange: ExecutionTimeRange;
     focusClicked: TreeNodeData | null;
     setFocusClicked: (node: TreeNodeData | null) => void;
     onAddAboveButtonClick: (ruleId: Rule, index: number) => void;
@@ -37,6 +39,8 @@ type NodeProps = {
 export default function TableNode({
     node,
     mode,
+    showExecutionTime,
+    executionTimeRange,
     focusClicked,
     setFocusClicked,
     onAddAboveButtonClick,
@@ -82,31 +86,13 @@ export default function TableNode({
             <TableNodeBox
                 node={node}
                 mode={mode}
+                showExecutionTime={showExecutionTime}
+                executionTimeRange={executionTimeRange}
                 isHovered={isHovered}
                 onNodeClicked={onNodeClicked}
                 onRowClicked={onRowClicked}
                 onPopOutClicked={onPopOutClicked}
             />
-            {(((hovered || focusClicked === node) && mode === "explore") || (mode === "query" && focusClicked === node))  && (
-                <Tooltip title={node === focusClicked ? "Reset focus!" : "Focus on this node!"} placement="right" enterDelay={500}>
-                    <button
-                        type="button"
-                        className="custom-node-btn-corner-base custom-node-btn-corner-explore"
-                        style={{ top: -NORMAL_HEIGHT, left: node.width - 10, ...(greyedButtonStyle(node) as React.CSSProperties) }}
-                        onClick={() => {
-                            if (focusClicked === node) {
-                                setFocusClicked(null)
-                            }
-                            else {
-                                setFocusClicked(node)
-                            }
-                            onFocusButtonClick(node, node === focusClicked)
-                        }}
-                    >
-                        <TbFocus2 />
-                    </button>
-                </Tooltip>
-            )}
             {
                 node.isRootNode && node.hasRulseAbove() && mode === "query" && (
                     <Tooltip title="Add a new rule above the root!" placement="right" enterDelay={500}>
@@ -215,19 +201,6 @@ export default function TableNode({
                     </Tooltip>
                 )
             }
-
-            {/*hovered && mode === "explore" && (
-                <Tooltip title={"Highlight in Code!"} placement="right" enterDelay={500}>
-                    <button
-                        type="button"
-                        className="custom-node-btn-side-left"
-                        style={{ right: node.width, ...(greyedButtonStyle(node) as React.CSSProperties) }}
-                        onClick={() => codingButtonClicked(node)}
-                    >
-                        <FaLaptopCode />
-                    </button>
-                </Tooltip>
-            )*/}
 
             {/* RulesAbove */}
             <AddRuleDialog 

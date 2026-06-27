@@ -86,7 +86,7 @@ function IndentedTreeRow({
 
   let caret = '';
   if (row.node.getChildren().length > 0) {
-    caret = row.node.isCollapsed ? '>' : 'v';
+    caret = row.node.isCollapsed ? '>' : '';
   }
 
   let prefix = '';
@@ -136,7 +136,7 @@ function IndentedTreeRow({
         fontVariantNumeric: 'tabular-nums',
       }}
     >
-      #{rowIndex}
+      {rowIndex}
     </span>
     {prefix}
     {(caret ? caret : ' ') + ' '}

@@ -3,6 +3,8 @@ import type { PositionedTableNodeData } from "../../data/TreeNodeData";
 import type { ExecutionTimeRange, Rule, TableEntryResponse } from "../../types/types";
 import RuleNode from "./Node/RuleNode";
 import TableNode from "./Node/TableNode";
+import { RuleNodeBox } from "./Node/RuleNodeBox";
+import { TableNodeBox } from "./Node/TableNodeBox";
 
 type TreeNodeRendererProps = {
   node: PositionedTableNodeData;
@@ -29,6 +31,7 @@ type TreeNodeRendererProps = {
   setHoveredNode: (node: TreeNodeData | null) => void;
   onPopOutClicked: (node: TableNodeData) => void;
   codingButtonClicked: (node:TreeNodeData) => void;
+  visualOnly?: boolean;
 };
 
 export default function TreeNodeRenderer({
@@ -55,7 +58,8 @@ export default function TreeNodeRenderer({
   onFocusNode,
   hoveredNode,
   setHoveredNode,
-  onPopOutClicked  
+  onPopOutClicked,
+  visualOnly = false,
 }: Readonly<TreeNodeRendererProps>) {
 
   if (node.data instanceof TableNodeData) {
@@ -67,7 +71,19 @@ export default function TreeNodeRenderer({
         height={node.data.height}
         style={{ overflow: 'visible' }}
       >
-        <TableNode
+        {visualOnly ? (
+          <TableNodeBox
+            node={node.data}
+            mode={mode}
+            showExecutionTime={showNodeExecutionTimes}
+            executionTimeRange={executionTimeRange}
+            isHovered={false}
+            onNodeClicked={() => undefined}
+            onRowClicked={() => undefined}
+            onPopOutClicked={() => undefined}
+          />
+        ) : (
+          <TableNode
             node={node.data}
             mode={mode}
             showExecutionTime={showNodeExecutionTimes}
@@ -90,6 +106,7 @@ export default function TreeNodeRenderer({
             setHoveredNode={setHoveredNode}
             onPopOutClicked={onPopOutClicked}
           />
+        )}
       </foreignObject>
     )
   }
@@ -102,7 +119,10 @@ export default function TreeNodeRenderer({
         height={node.data.height}
         style={{ overflow: 'visible' }}
       >
-        <RuleNode
+        {visualOnly ? (
+          <RuleNodeBox node={node.data} />
+        ) : (
+          <RuleNode
             node={node.data}
             mode={mode}
             isSingleRuleTree={isSingleRuleTree}
@@ -117,6 +137,7 @@ export default function TreeNodeRenderer({
             isHovered={hoveredNode === node.data}
             setHoveredNode={setHoveredNode}
           />
+        )}
       </foreignObject>
     )
   }

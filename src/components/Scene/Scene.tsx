@@ -29,7 +29,7 @@ type SceneProps = {
 // ...imports...
 
 function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps) {
-  const breadcrumbFooterHeight = 42;
+  const breadcrumbHeaderHeight = 42;
 
   // State for window dimensions
   const [dimensions, setDimensions] = useState({
@@ -66,6 +66,9 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
 
   // State for search value
   const [searchValue, setSearchValue] = useState("");
+
+  // Whether breadcrumb labels should be displayed without truncation
+  const [showFullBreadcrumbLabels, setShowFullBreadcrumbLabels] = useState(false);
 
   // State for focused node in the tree
   const [focusClicked, setFocusClicked] = useState<TreeNodeData | null>(null);
@@ -461,7 +464,7 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
     <LogicColorizationContext.Provider value={colorizationMode}>
     <div style={{ position: "relative" }}>
       {/* Top right action buttons */}
-      <div style={{ position: "absolute", top: 16, right: 16, zIndex: 1, display: "flex", flexDirection: "column", gap: 8, backgroundColor: "white", padding: 16, borderRadius: 8, boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
+      <div style={{ position: "absolute", top: breadcrumbHeaderHeight + 16, right: 16, zIndex: 1, display: "flex", flexDirection: "column", gap: 8, backgroundColor: "white", padding: 16, borderRadius: 8, boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
         <div style={{textAlign:"center"}}>
         <ToggleButtonGroup
           size="small"
@@ -602,6 +605,25 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
         </Tooltip>
 
         <Tooltip
+          title="Show complete labels in the breadcrumb; long paths can be scrolled horizontally."
+          placement="left"
+          enterDelay={500}
+        >
+          <FormControlLabel
+            sx={{ margin: 0, justifyContent: "space-between", fontSize: 14 }}
+            label="Full breadcrumb labels"
+            labelPlacement="start"
+            control={
+              <Switch
+                size="small"
+                checked={showFullBreadcrumbLabels}
+                onChange={(_, checked) => setShowFullBreadcrumbLabels(checked)}
+              />
+            }
+          />
+        </Tooltip>
+
+        <Tooltip
           title="Toggle logic variable text colors."
           placement="left"
           enterDelay={500}
@@ -708,40 +730,53 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
         />
       )}
 
+      <div className="page-breadcrumb-header">
+        <TreeBreadcrumb
+          rootNode={rootNode}
+          currentNode={currentBreadcrumbNode}
+          showFullLabels={showFullBreadcrumbLabels}
+          onNodeClick={handleBreadcrumbNodeClick}
+          onNodeHover={setBreadcrumbHoveredNode}
+        />
+      </div>
+
       {/* Main tree visualization */}
-      <Tree
-        data={rootNode}
-        mode={mode}
-        giveRemoveAbovePreview={handleRemoveAbovePreview}
-        giveRemoveBelowPreview={handleRemoveEdgePreview}
-        panToNodeId={panToNodeId}
-        hoveredNode={highlightedNode}
-        setHoveredNode={setHoveredNode}
-        treeVersion={treeVersion}
-        width={dimensions.width}
-        height={Math.max(0, dimensions.height - breadcrumbFooterHeight)}
-        codingButtonClicked={codingButtonClicked}
-        onRemoveAboveButtonClick={handleRemoveAboveButtonClick}
-        onRemoveBelowButtonClick={handleRemoveBelowButtonClick}
-        onAddAboveButtonClick={handleAddRuleAboveButtonClick}
-        onAddBelowButtonClick={handleAddRuleBelowButtonClick}
-        onCollapseButtonClick={handleCollapseButtonClick}
-        onMouseLeftButton={() => handleResetEffect("isGreyed")}
-        giveFocusPreview={handleFocusPreview}
-        handleRemoveEdgePreview={handleRemoveEdgePreview}
-        onNodeClicked={handleNodeClick}
-        onFocusButtonClick={handleRuleFocusButtonClick}
-        onFocusNode={handleFocusNode}
-        onRowClicked={handleFocusOnRow}
-        onPopOutClicked={handleShowTable}
-        setPanToNodeId={setPanToNodeId}
-        setFocusClicked={setFocusClicked}
-        focusClicked={focusClicked}
-      />
+      <div style={{ paddingTop: breadcrumbHeaderHeight }}>
+        <Tree
+          data={rootNode}
+          mode={mode}
+          giveRemoveAbovePreview={handleRemoveAbovePreview}
+          giveRemoveBelowPreview={handleRemoveEdgePreview}
+          panToNodeId={panToNodeId}
+          hoveredNode={highlightedNode}
+          setHoveredNode={setHoveredNode}
+          treeVersion={treeVersion}
+          width={dimensions.width}
+          height={Math.max(0, dimensions.height - breadcrumbHeaderHeight)}
+          codingButtonClicked={codingButtonClicked}
+          onRemoveAboveButtonClick={handleRemoveAboveButtonClick}
+          onRemoveBelowButtonClick={handleRemoveBelowButtonClick}
+          onAddAboveButtonClick={handleAddRuleAboveButtonClick}
+          onAddBelowButtonClick={handleAddRuleBelowButtonClick}
+          onCollapseButtonClick={handleCollapseButtonClick}
+          onMouseLeftButton={() => handleResetEffect("isGreyed")}
+          giveFocusPreview={handleFocusPreview}
+          handleRemoveEdgePreview={handleRemoveEdgePreview}
+          onNodeClicked={handleNodeClick}
+          onFocusButtonClick={handleRuleFocusButtonClick}
+          onFocusNode={handleFocusNode}
+          onRowClicked={handleFocusOnRow}
+          onPopOutClicked={handleShowTable}
+          setPanToNodeId={setPanToNodeId}
+          setFocusClicked={setFocusClicked}
+          focusClicked={focusClicked}
+        />
+      </div>
 
       {/* Side panel with indented tree */}
       <SidePanel
         open={showSidePanel}
+        topOffset={breadcrumbHeaderHeight}
         onClose={() => setShowSidePanel(!showSidePanel)}
         rootNode={rootNode}
         hoveredNode={highlightedNode}
@@ -762,15 +797,6 @@ function Scene({ error, message, sendMessage, codingButtonClicked }: SceneProps)
           }
         }}
       />
-
-      <div className="page-breadcrumb-footer">
-        <TreeBreadcrumb
-          rootNode={rootNode}
-          currentNode={currentBreadcrumbNode}
-          onNodeClick={handleBreadcrumbNodeClick}
-          onNodeHover={setBreadcrumbHoveredNode}
-        />
-      </div>
 
       <EditQueryDialog
         open={editQueryOpen}

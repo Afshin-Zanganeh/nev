@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Tooltip } from '@mui/material'
+import { FaChevronRight } from 'react-icons/fa'
 import { TableNodeData, type TreeNodeData } from '../../data/TreeNodeData'
 import ColoredLogicText from '../ColoredLogicText'
 import { formatNodeLabel } from './treeNodeLabel'
@@ -42,6 +43,7 @@ function shortenBreadcrumbLabel(label: string) {
 type TreeBreadcrumbProps = {
   rootNode: TreeNodeData
   currentNode: TreeNodeData | null
+  showFullLabels: boolean
   onNodeClick: (node: TreeNodeData) => void
   onNodeHover: (node: TreeNodeData | null) => void
 }
@@ -49,6 +51,7 @@ type TreeBreadcrumbProps = {
 export default function TreeBreadcrumb({
   rootNode,
   currentNode,
+  showFullLabels,
   onNodeClick,
   onNodeHover,
 }: Readonly<TreeBreadcrumbProps>) {
@@ -59,7 +62,7 @@ export default function TreeBreadcrumb({
     <div className="tree-breadcrumb" aria-label="Path from root to current node">
       {breadcrumbPath.map((pathNode, idx) => {
         const fullLabel = formatNodeLabel(pathNode)
-        const shortLabel = shortenBreadcrumbLabel(fullLabel)
+        const displayedLabel = showFullLabels ? fullLabel : shortenBreadcrumbLabel(fullLabel)
 
         return (
           <span
@@ -72,11 +75,15 @@ export default function TreeBreadcrumb({
               hoveredIndex !== null && idx > hoveredIndex ? 'tree-breadcrumb__item--dimmed' : '',
             ].filter(Boolean).join(' ')}
           >
-            {idx > 0 && <span className="tree-breadcrumb__separator">/</span>}
+            {idx > 0 && (
+              <span className="tree-breadcrumb__separator" aria-hidden="true">
+                <FaChevronRight />
+              </span>
+            )}
             <Tooltip title={fullLabel} placement="top" enterDelay={400}>
               <button
                 type="button"
-                className="tree-breadcrumb__button"
+                className={`tree-breadcrumb__button${showFullLabels ? ' tree-breadcrumb__button--full' : ''}`}
                 onClick={() => onNodeClick(pathNode)}
                 onMouseEnter={() => {
                   setHoveredIndex(idx)
@@ -87,7 +94,7 @@ export default function TreeBreadcrumb({
                   onNodeHover(null)
                 }}
               >
-                <ColoredLogicText text={shortLabel} />
+                <ColoredLogicText text={displayedLabel} />
               </button>
             </Tooltip>
           </span>

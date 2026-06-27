@@ -7,12 +7,11 @@ html, body, #root {
   padding: 0;
 }
 
-.page-breadcrumb-footer {
+.page-breadcrumb-header {
   align-items: center;
   background: #fff;
-  border-top: 1px solid #dfe4ea;
-  bottom: 0;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid #dfe4ea;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   box-sizing: border-box;
   display: flex;
   height: 42px;
@@ -20,6 +19,7 @@ html, body, #root {
   padding: 0 12px;
   position: fixed;
   right: 0;
+  top: 0;
   z-index: 5;
 }
 
@@ -29,6 +29,7 @@ html, body, #root {
   color: #444;
   display: flex;
   font-size: 15px;
+  height: 100%;
   line-height: 1.2;
   min-width: 0;
   overflow-x: auto;
@@ -65,6 +66,12 @@ html, body, #root {
   white-space: nowrap;
 }
 
+.tree-breadcrumb__button--full {
+  max-width: none;
+  overflow: visible;
+  text-overflow: clip;
+}
+
 .tree-breadcrumb__button:hover,
 .tree-breadcrumb__button:focus-visible {
   text-decoration: underline;
@@ -85,6 +92,9 @@ html, body, #root {
 }
 
 .tree-breadcrumb__separator {
+  align-items: center;
   color: #999;
+  display: inline-flex;
+  font-size: 0.7em;
   padding: 0 8px;
 }

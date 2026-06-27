@@ -8,6 +8,7 @@ import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 
 type SidePanelProps = {
   open: boolean;
+  topOffset?: number;
   onClose: (open: boolean) => void;
   rootNode: TreeNodeData;
   hoveredNode: TreeNodeData | null;
@@ -17,6 +18,7 @@ type SidePanelProps = {
 
 export default function SidePanel({
   open,
+  topOffset = 0,
   onClose,
   rootNode,
   hoveredNode,
@@ -32,7 +34,7 @@ export default function SidePanel({
         <Tooltip title="Open the overview tree!" placement="left" enterDelay={500}>
           <button
             className="overlay-toggle-btn"
-            style={{ left: 0 }}
+            style={{ left: 0, top: `calc(50% + ${topOffset / 2}px)` }}
             onClick={() => onClose(true)}
           >
             <IoIosArrowForward />
@@ -46,7 +48,7 @@ export default function SidePanel({
             onClick={() => onClose(false)}
             style={{
               position: 'fixed',
-              top: '50%',
+              top: `calc(50% + ${topOffset / 2}px)`,
               left: drawerWidth - HANDLE_WIDTH,
               transform: 'translateY(-50%)',
               zIndex: 4,
@@ -59,48 +61,55 @@ export default function SidePanel({
       {/* somehow css doesnt work, so inline */}
 
       {open && (
-        <Resizable
-          size={{ width: drawerWidth, height: "100vh" }}
-          minWidth={150}
-          maxWidth={700}
-          enable={{ right: open }}
-          handleStyles={{
-            right: {
-              cursor: "ew-resize",
-            }
-          }}
-          onResize={(_e, _direction, ref) => {
-            setDrawerWidth(ref.offsetWidth);
-          }}
+        <div
           style={{
             position: "fixed",
-            top: 0,
+            top: topOffset,
+            bottom: 0,
             left: 0,
             zIndex: 4,
-            height: "100vh",
-            background: "#fff",
-            boxShadow: open ? "2px 0 8px rgba(0,0,0,0.07)" : undefined,
-            overflow: "hidden"
+            width: drawerWidth,
           }}
         >
-          <div
+          <Resizable
+            size={{ width: drawerWidth, height: "100%" }}
+            minWidth={150}
+            maxWidth={700}
+            enable={{ right: open }}
+            handleStyles={{
+              right: {
+                cursor: "ew-resize",
+              }
+            }}
+            onResize={(_e, _direction, ref) => {
+              setDrawerWidth(ref.offsetWidth);
+            }}
             style={{
-              width: "100%",
+              background: "#fff",
+              boxShadow: "2px 0 8px rgba(0,0,0,0.07)",
               height: "100%",
-              padding: 12,
-              boxSizing: "border-box",
-              overflow: "hidden",
-              transition: "width 0.2s",
+              overflow: "hidden"
             }}
           >
-            <IndentedTree
-              node={rootNode}
-              onNodeClick={onNodeClick}
-              hoveredNode={hoveredNode}
-              setHoveredNode={setHoveredNode}
-            />
-          </div>
-        </Resizable>
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                padding: 12,
+                boxSizing: "border-box",
+                overflow: "hidden",
+                transition: "width 0.2s",
+              }}
+            >
+              <IndentedTree
+                node={rootNode}
+                onNodeClick={onNodeClick}
+                hoveredNode={hoveredNode}
+                setHoveredNode={setHoveredNode}
+              />
+            </div>
+          </Resizable>
+        </div>
       )}
     </>
   );
